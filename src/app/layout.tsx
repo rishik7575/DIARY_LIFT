@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} scroll-smooth`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable} scroll-smooth`}>
       <body className="font-sans antialiased bg-[#FAFAFA] text-slate-900 min-h-screen selection:bg-amber-100 selection:text-amber-900">
         <AuthProvider>{children}</AuthProvider>
       </body>
