@@ -351,7 +351,7 @@ export default function InvestorDashboard() {
                     <div className="space-y-2.5 text-xs text-slate-600">
                       <div className="flex justify-between py-1 border-b border-slate-100">
                         <span>Stress Coverage Tenure:</span>
-                        <span className="font-semibold text-slate-900">6.4 Months Guaranteed</span>
+                        <span className="font-semibold text-slate-900">6.4 Months Estimated Coverage</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-100">
                         <span>Dry Season Nutrition Buffer:</span>
@@ -613,7 +613,7 @@ export default function InvestorDashboard() {
 
                   {/* Legal disclaimer */}
                   <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
-                    {scenario.disclaimer} Agricultural asset returns vary with biological health, weather, and milk quality. DairyLift guarantees baseline cashflow via the 145% Yield Reserve Escrow Buffer.
+                    {scenario.disclaimer} Agricultural asset returns vary with biological health, weather, feed costs, and milk quality. Projections are sample illustrations only and returns are not guaranteed. DairyLift targets baseline cashflow stability via the 145% Yield Reserve Escrow Buffer.
                   </div>
                 </CardContent>
               </Card>

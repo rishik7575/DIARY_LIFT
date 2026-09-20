@@ -253,7 +253,7 @@ export const INVESTOR_PROFILES: InvestorProfile[] = [
       allocatedCattleIds: ['DL-C-019'],
       baselineMonthlyYieldRate: 0.015,     // 1.5% fixed base
       currentPerformanceBonusRate: 0.0000, // 0% dynamic bonus (Cow is currently in Dry / Transition cycle)
-      blendedMonthlyYieldRate: 0.0150,     // 1.50% guaranteed baseline paid from Yield Reserve!
+      blendedMonthlyYieldRate: 0.0150,     // 1.50% illustrative baseline modeled from Yield Reserve buffer
       annualizedRunRateAPY: 0.1800,        // 18.00% APY
       totalDividendsPaidToDateINR: 3000,
       unrealizedAppreciationINR: 5000,

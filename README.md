@@ -11,9 +11,9 @@ DairyLift is an institutional-grade, tech-enabled dairy farming, quick-commerce,
 
 ## 🌟 Key Highlights & Core Business Architecture
 
-- **Sustainable Yield Structure**: Operates on a verified **1.5% fixed monthly base yield (18% APY)**, plus a dynamic performance bonus (up to **0.5% monthly**) tied to verifiable parlour milk yields.
-- **Yield Reserve Health Fund**: Backstopped by a **145% escrow liquidity buffer** (₹8.45 Crores escrow buffer audited by Deloitte Agritech Assurance) guaranteeing 6.4 months of baseline cashflow protection during natural dry cycles.
-- **100% Capital Asset Protection**: Livestock mortality policies underwritten by The New India Assurance Co. Ltd.
+- **Illustrative Yield Modeling**: Explores sample scenario models with a **1.5% monthly baseline illustration (~18% APY sample run-rate)** plus an illustrative dynamic performance bonus tied to mock parlour milk yields *(Strictly sample demo data — returns are not guaranteed and are subject to biological and market risk)*.
+- **Yield Reserve Health Fund Concept**: Backstopped by a simulated **145% escrow liquidity buffer** (₹8.45 Crores simulated reserve) targeting cashflow stabilization during natural cow lactation and dry cycles.
+- **Asset Protection Modeling**: Demonstrates institutional-style risk mitigation including simulated mortality insurance frameworks and veterinary preventive care protocols.
 - **Zero Layout Overlap & Strict Design Tokens**: Built strictly with CSS Grid and Flexbox (no custom absolute positioning) using Deep Slate (`#0F172A`), Forest Green (`#166534`), and Warm Gold (`#D97706`).
 
 ---
