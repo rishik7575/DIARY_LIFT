@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { SparklesCore } from '@/components/ui/aceternity/sparkles';
 import {
   Milk,
   TrendingUp,
@@ -22,17 +21,32 @@ import {
   ExternalLink,
   DollarSign,
   Percent,
+  Thermometer,
+  Sliders,
+  Layers,
+  Sparkles,
 } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col justify-between antialiased selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-[#FDFBF7] text-slate-900 flex flex-col justify-between antialiased selection:bg-amber-100 selection:text-amber-900">
       
       {/* ═══════════════════════════════════════════════════════════════════
-          ENTERPRISE TOPBAR
-          Deep Slate (#0F172A) with clean typography and high contrast
+          ENTERPRISE COMPLIANCE & PROTOTYPE DISCLAIMER
       ═══════════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 bg-[#0F172A] text-white border-b border-slate-800 shadow-md">
+      <div className="bg-[#0F172A] text-slate-300 text-xs py-2 px-6 border-b border-slate-800 text-center flex items-center justify-center gap-2">
+        <span className="bg-amber-500 text-slate-900 text-[10px] font-bold uppercase px-2 py-0.5 rounded tracking-wider">
+          Simulation Demo
+        </span>
+        <span>
+          DairyLift is an enterprise agritech architecture prototype. All financial yields, sensor feeds, and audit figures are simulated for interactive demonstration.
+        </span>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          EDITORIAL TOPBAR
+      ═══════════════════════════════════════════════════════════════════ */}
+      <header className="sticky top-0 z-50 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-stone-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
           
           {/* Brand Logo */}
@@ -41,27 +55,27 @@ export default function LandingPage() {
               <Milk className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-2xl font-black tracking-tight text-white leading-none">
+              <span className="font-serif text-2xl font-black tracking-tight text-slate-900 leading-none">
                 DAIRY<span className="text-[#D97706]">-LIFT</span>
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 mt-1">
-                Institutional Dairy ERP
+              <span className="text-[10px] uppercase font-bold tracking-widest text-[#166534] mt-1">
+                Ecosystem & ERP Platform
               </span>
             </div>
           </Link>
 
-          {/* Nav Quick Links */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-300">
-            <Link href="/consumer" className="hover:text-white transition-colors">
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-700">
+            <Link href="/consumer" className="hover:text-[#166534] transition-colors">
               Consumer Store
             </Link>
-            <Link href="/investor" className="hover:text-white transition-colors">
+            <Link href="/investor" className="hover:text-[#166534] transition-colors">
               Investor Suite
             </Link>
-            <Link href="/staff" className="hover:text-white transition-colors">
+            <Link href="/staff" className="hover:text-[#166534] transition-colors">
               Farm Staff ERP
             </Link>
-            <Link href="/admin" className="hover:text-white transition-colors">
+            <Link href="/admin" className="hover:text-[#166534] transition-colors">
               Admin Command
             </Link>
           </div>
@@ -69,14 +83,13 @@ export default function LandingPage() {
           {/* Action Button */}
           <div className="flex items-center gap-3">
             <Link href="/auth">
-              <Button variant="gold" size="sm" className="hidden sm:inline-flex gap-1.5">
-                <span>Access Portal</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+              <Button variant="outline" size="sm" className="border-stone-300 text-slate-800 hover:bg-stone-100">
+                Demo Accounts
               </Button>
             </Link>
             <Link href="/auth">
-              <Button variant="default" size="sm" className="bg-[#166534] hover:bg-[#14532D]">
-                Sign In
+              <Button variant="forest" size="sm" className="bg-[#166534] hover:bg-[#14532D] text-white">
+                Launch Portals <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
           </div>
@@ -85,261 +98,240 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO SECTION WITH ACETERNITY SPARKLES
-          Zero overlap: strict flex-col flow with generous padding
+          HERO SECTION: Warm Cream & Forest Green Editorial Focus
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-[#0F172A] text-white py-24 md:py-32 px-6 border-b border-slate-800">
-        
-        {/* Aceternity UI Sparkles Core Background */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none opacity-40">
-          <SparklesCore
-            id="hero-sparkles"
-            background="transparent"
-            minSize={0.8}
-            maxSize={2.4}
-            particleDensity={60}
-            particleColor="#FCD34D"
-          />
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-[#F7F4EC] to-[#FDFBF7] py-20 md:py-28 px-6 border-b border-stone-200">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-6">
           
-          {/* Institutional Model Pill */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Badge
-              variant="gold"
-              className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-8 bg-amber-400/20 text-amber-300 border-amber-400/40"
-            >
-              <Award className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
-              Institutional Model: 1.5% Base Yield (18% APY) + Dynamic Milk Bonus
-            </Badge>
-          </motion.div>
+          <div className="inline-flex items-center gap-2 bg-[#166534]/10 border border-[#166534]/20 rounded-full px-4 py-1.5 text-xs font-semibold text-[#166534]">
+            <Sparkles className="w-3.5 h-3.5 text-[#D97706]" />
+            <span>High-Density Enterprise Dairy Operations & Co-Ownership ERP</span>
+          </div>
 
-          {/* Massive Editorial Header (Playfair Display) */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl font-black tracking-tight text-white leading-[1.05] mb-8"
-          >
-            Fresh Dairy.{' '}
-            <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-200">
-              Institutional Wealth.
-            </span>
-          </motion.h1>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-serif text-slate-900 tracking-tight max-w-4xl leading-[1.15]">
+            Bridging Urban Capital with Precision Agritech & Dairy Operations.
+          </h1>
 
-          {/* High-Contrast Subhead */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-slate-300 text-lg sm:text-xl md:text-2xl font-normal leading-relaxed max-w-3xl mx-auto mb-10"
-          >
-            A high-specification agritech ERP bridging urban capital with Indian dairy farming. Own insured, biometrically tagged cattle assets with{' '}
-            <strong className="text-white font-bold">contractual 1.5% monthly base cashflow</strong>{' '}
-            and dynamic performance bonuses paid directly from verified milk production.
-          </motion.p>
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
+            DairyLift combines high-precision parlour IoT telemetry, veterinary health monitoring, sub-15 minute cold-chain commerce, and sustainable livestock asset co-ownership.
+          </p>
 
-          {/* Primary Action Button Routing to Auth Gateway */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
-          >
-            <Link href="/auth" className="w-full sm:w-auto">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <Link href="/auth">
               <Button
-                variant="default"
+                variant="forest"
                 size="lg"
-                className="w-full sm:w-auto h-14 px-8 text-base font-bold bg-[#166534] hover:bg-[#14532D] shadow-lg shadow-emerald-900/40 text-white rounded-xl"
+                className="bg-[#166534] hover:bg-[#14532D] text-white font-semibold shadow-md px-8 h-12 text-sm"
               >
-                <span>Launch Enterprise Gateway</span>
-                <ArrowRight className="w-5 h-5 ml-2.5" />
+                Explore the 4 Portals <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
 
-            <Link href="/consumer" className="w-full sm:w-auto">
+            <Link href="/consumer">
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto h-14 px-8 text-base font-bold border-slate-700 bg-slate-800/80 text-white hover:bg-slate-700 rounded-xl"
+                className="border-stone-300 bg-white hover:bg-stone-50 text-slate-800 font-semibold px-8 h-12 text-sm"
               >
-                <ShoppingCart className="w-4.5 h-4.5 mr-2 text-emerald-400" />
-                <span>Shop Fresh Dairy (12m)</span>
+                Browse Fresh Farm Catalog
               </Button>
             </Link>
-          </motion.div>
+          </div>
 
-          {/* Yield Stability Metrics Strip */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 w-full max-w-4xl text-left">
-            {[
-              { label: 'Fixed Base Yield', val: '1.5% / mo', sub: '18% Annualized APY', icon: Percent },
-              { label: 'Performance Bonus', val: 'Up to 0.5%', sub: 'Tied to Milk Offtake', icon: TrendingUp },
-              { label: 'Yield Reserve Ratio', val: '145.0%', sub: '6.4 mo dry buffer', icon: ShieldCheck },
-              { label: 'Asset Insurance', val: '100% Covered', sub: 'New India Assurance', icon: Shield },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-xl bg-white/[0.06] border border-white/10 backdrop-blur-md"
-              >
-                <item.icon className="w-4 h-4 text-amber-400 mb-2" />
-                <div className="font-display text-2xl font-bold text-white">{item.val}</div>
-                <div className="text-xs font-semibold text-slate-300 mt-0.5">{item.label}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">{item.sub}</div>
-              </div>
-            ))}
+          {/* Quick Metrics Strip */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl mt-12 text-left">
+            <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Baseline Model</span>
+              <div className="text-2xl font-bold text-[#166534] font-serif mt-1">1.5% / Month</div>
+              <p className="text-xs text-slate-500 mt-0.5">Fixed Monthly Run-Rate (Demo)</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Dynamic Bonus</span>
+              <div className="text-2xl font-bold text-[#D97706] font-serif mt-1">Up to +0.5%</div>
+              <p className="text-xs text-slate-500 mt-0.5">Verifiable Parlour Milk Yield</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Yield Reserve Buffer</span>
+              <div className="text-2xl font-bold text-slate-900 font-serif mt-1">145% Optimal</div>
+              <p className="text-xs text-slate-500 mt-0.5">Dry-Cycle Cashflow Escrow</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Active IoT Fleet</span>
+              <div className="text-2xl font-bold text-slate-900 font-serif mt-1">1,280 Units</div>
+              <p className="text-xs text-slate-500 mt-0.5">Nashik & Pune Pastures</p>
+            </div>
           </div>
 
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          4-PORTAL GATEWAY OVERVIEW
-          Crisp White Canvas (#FFFFFF & #FAFAFA), Clean Shadcn UI Cards
+          THE FOUR ARCHITECTURAL PORTALS (Brand + Trust)
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 px-6 max-w-7xl mx-auto w-full">
-        
-        <div className="max-w-3xl mb-14">
-          <Badge variant="default" className="bg-[#166534] text-xs uppercase px-3 py-1 font-bold mb-3">
-            Integrated Enterprise Architecture
+      <section className="py-20 px-6 max-w-7xl mx-auto w-full">
+        <div className="text-center space-y-2 mb-12">
+          <Badge variant="outline" className="border-stone-300 text-slate-700 bg-white font-semibold">
+            Unified System Architecture
           </Badge>
-          <h2 className="font-display text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
-            Four Interconnected Portals. One Relational Ledger.
+          <h2 className="text-3xl font-bold font-serif text-slate-900 tracking-tight">
+            Four Dedicated Portals. One Cohesive Ecosystem.
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg mt-3">
-            Every transaction, milk log, and dividend payout connects in real time through our institutional livestock schema.
+          <p className="text-sm text-slate-600 max-w-xl mx-auto">
+            Each role interacts with a specialized, highly functional interface designed for its operational purpose.
           </p>
         </div>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
-          {/* Portal 1 */}
-          <Card className="hover:shadow-md transition-shadow flex flex-col justify-between">
-            <CardHeader>
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#166534] mb-3">
-                <ShoppingCart className="w-5 h-5" />
+          {/* Portal 1: Master Admin Command */}
+          <Card className="border-stone-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col justify-between">
+            <CardHeader className="border-b border-stone-100 p-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <Badge className="bg-slate-100 text-slate-800 border-slate-300">Executive & Governance</Badge>
               </div>
-              <CardTitle className="text-lg">Consumer Store</CardTitle>
-              <CardDescription>
-                Hyper-local 12-min quick commerce for single-origin A2 Gir milk, bilona ghee, and artisan dairy.
+              <CardTitle className="text-xl font-bold font-serif text-slate-900">
+                1. Master Command Center (/admin)
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                Executive farm oversight, IoT sensor alarms, investment plan draft/approval lifecycle, and store pricing.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Link href="/consumer">
-                <Button variant="outline" className="w-full justify-between text-xs font-bold">
-                  <span>Open Storefront</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
-              </Link>
+            <CardContent className="p-6 space-y-3 text-xs text-slate-600">
+              <p>• <strong>Environmental IoT Alarms:</strong> Monitors shed temperature spikes (e.g. 32.4°C &gt; 30.0°C) with emergency cooling controls.</p>
+              <p>• <strong>Plan Lifecycle Editor:</strong> Draft, review, and approve investment allocation tiers with immutable audit history.</p>
+              <p>• <strong>Store Pricing & Inventory:</strong> Direct control over milk and ghee retail prices and stock availability.</p>
             </CardContent>
-          </Card>
-
-          {/* Portal 2 */}
-          <Card className="hover:shadow-md transition-shadow flex flex-col justify-between border-amber-200 ring-1 ring-amber-500/10">
-            <CardHeader>
-              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#D97706] mb-3">
-                <TrendingUp className="w-5 h-5" />
-              </div>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Investor Suite</CardTitle>
-                <Badge variant="gold" className="text-[10px]">1.5% Base</Badge>
-              </div>
-              <CardDescription>
-                Track live cattle assets, IoT telemetry, monthly dividend ledger, and yield reserve health.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/investor">
-                <Button variant="default" className="w-full justify-between text-xs font-bold bg-[#166534] hover:bg-[#14532D]">
-                  <span>Investor Dashboard</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Portal 3 */}
-          <Card className="hover:shadow-md transition-shadow flex flex-col justify-between">
-            <CardHeader>
-              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 mb-3">
-                <ClipboardList className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-lg">Farm Staff ERP</CardTitle>
-              <CardDescription>
-                Operational dairy management: AM/PM milk logging, Fat & SNF testing, and IoT collar veterinary alerts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/staff">
-                <Button variant="outline" className="w-full justify-between text-xs font-bold">
-                  <span>Staff Workspace</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Portal 4 */}
-          <Card className="hover:shadow-md transition-shadow flex flex-col justify-between">
-            <CardHeader>
-              <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-800 mb-3">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <CardTitle className="text-lg">Master Admin</CardTitle>
-              <CardDescription>
-                Executive command center for platform revenue analytics, herd health index, and dividend disbursements.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+            <div className="p-6 pt-0">
               <Link href="/admin">
-                <Button variant="outline" className="w-full justify-between text-xs font-bold">
-                  <span>Admin Command</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                <Button variant="outline" className="w-full border-slate-300 text-slate-800 hover:bg-slate-50">
+                  Open Admin Command <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
+            </div>
+          </Card>
+
+          {/* Portal 2: Farm Staff ERP */}
+          <Card className="border-stone-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col justify-between">
+            <CardHeader className="border-b border-stone-100 p-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-10 h-10 rounded-lg bg-[#166534] text-white flex items-center justify-center">
+                  <ClipboardList className="w-5 h-5" />
+                </div>
+                <Badge className="bg-emerald-50 text-[#166534] border-emerald-200">Field Operations</Badge>
+              </div>
+              <CardTitle className="text-xl font-bold font-serif text-slate-900">
+                2. Farm Operations ERP (/staff)
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                High-density mobile-ready console for parlour milkers, veterinarians, and shed managers.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3 text-xs text-slate-600">
+              <p>• <strong>Parlour Milking Logger:</strong> AM/PM volume validation with duplicate-entry prevention and Fat/SNF quality scoring.</p>
+              <p>• <strong>Operational Action Center:</strong> In-app notification for sensor spikes with staff mitigation action logging.</p>
+              <p>• <strong>Clinical Exam Modal:</strong> Log vet diagnoses, prescribe protocols, and schedule follow-ups.</p>
             </CardContent>
+            <div className="p-6 pt-0">
+              <Link href="/staff">
+                <Button variant="outline" className="w-full border-slate-300 text-slate-800 hover:bg-slate-50">
+                  Open Farm Staff ERP <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </Card>
+
+          {/* Portal 3: Investor Financial Suite */}
+          <Card className="border-stone-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col justify-between">
+            <CardHeader className="border-b border-stone-100 p-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-10 h-10 rounded-lg bg-[#D97706] text-white flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <Badge className="bg-amber-50 text-amber-800 border-amber-200">Financial Transparency</Badge>
+              </div>
+              <CardTitle className="text-xl font-bold font-serif text-slate-900">
+                3. Investor Financial Suite (/investor)
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                Institutional livestock asset co-ownership with audited dividend ledger and IoT telemetry.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3 text-xs text-slate-600">
+              <p>• <strong>Disbursement History:</strong> Stacked bar curves showing verified 1.5% fixed base + dynamic milk bonus.</p>
+              <p>• <strong>Smart-Collar Telemetry:</strong> Live rumen motility, core body temperature, and daily milk yields.</p>
+              <p>• <strong>Yield Reserve Audit:</strong> 145% buffer coverage ensuring 6.4 months of stress resilience during dry periods.</p>
+            </CardContent>
+            <div className="p-6 pt-0">
+              <Link href="/investor">
+                <Button variant="outline" className="w-full border-slate-300 text-slate-800 hover:bg-slate-50">
+                  Open Investor Suite <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </Card>
+
+          {/* Portal 4: Consumer Storefront */}
+          <Card className="border-stone-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col justify-between">
+            <CardHeader className="border-b border-stone-100 p-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                  <ShoppingCart className="w-5 h-5" />
+                </div>
+                <Badge className="bg-blue-50 text-blue-800 border-blue-200">Quick-Commerce</Badge>
+              </div>
+              <CardTitle className="text-xl font-bold font-serif text-slate-900">
+                4. Consumer Fresh Store (/consumer)
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-500">
+                Farm-to-doorstep dairy commerce with live price updates and cold-chain slot delivery.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3 text-xs text-slate-600">
+              <p>• <strong>A2 Dairy Catalog:</strong> Full cream milk, Vedic bilona ghee, cultured paneer, and artisan butter.</p>
+              <p>• <strong>Slide-Over Cart Drawer:</strong> Automated delivery fee computation (&gt;₹499 free) and slot picker.</p>
+              <p>• <strong>Co-Ownership Discovery:</strong> Direct educational pathway to co-owning the cows that produce the dairy.</p>
+            </CardContent>
+            <div className="p-6 pt-0">
+              <Link href="/consumer">
+                <Button variant="outline" className="w-full border-slate-300 text-slate-800 hover:bg-slate-50">
+                  Open Consumer Store <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
           </Card>
 
         </div>
-
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          CORPORATE FOOTER
-          Deep Slate (#090D16) with compliance details
+          ENTERPRISE FOOTER
       ═══════════════════════════════════════════════════════════════════ */}
-      <footer className="bg-[#090D16] text-slate-400 py-12 px-6 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
-          
+      <footer className="bg-[#0F172A] text-white border-t border-slate-800 py-12 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-400">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#166534] flex items-center justify-center text-white">
-              <Milk className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-[#166534] flex items-center justify-center text-white font-bold">
+              DL
             </div>
-            <span className="font-display text-lg font-bold text-white">
-              DAIRY<span className="text-[#D97706]">-LIFT</span>
-            </span>
-            <span className="text-slate-500 ml-2">Technologies Pvt. Ltd.</span>
+            <span>DairyLift Agribusiness & Dairy ERP Systems.</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-slate-400">
-            <span>FSSAI Lic: #10024021000842</span>
-            <span>CIN: U01100MH2024PTC394821</span>
-            <span>New India Assurance Covered</span>
-            <Link href="/auth" className="text-amber-400 hover:underline">
-              Gateway Login
-            </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/auth" className="hover:text-white">Authentication Gateway</Link>
+            <Link href="/admin" className="hover:text-white">Admin Command</Link>
+            <Link href="/staff" className="hover:text-white">Farm Staff ERP</Link>
+            <Link href="/investor" className="hover:text-white">Investor Suite</Link>
+            <Link href="/consumer" className="hover:text-white">Consumer Store</Link>
           </div>
 
-          <div className="text-slate-500">
-            © 2026 Dairy-Lift. Institutional Agri-Asset Architecture.
+          <div className="text-slate-500 font-mono text-[11px]">
+            DEMO BUILD · PHASE 1 FRONTEND ARCHITECTURE
           </div>
-
         </div>
       </footer>
 

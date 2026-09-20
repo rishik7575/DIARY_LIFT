@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PortalGuard from '@/components/layout/PortalGuard';
 import PortalLayout from '@/components/layout/PortalLayout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { investmentService, InvestmentPlanConfig, INVESTMENT_PLANS } from '@/lib/services';
+import { investmentService, InvestmentPlanConfig } from '@/lib/services';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { formatCurrency } from '@/lib/utils';
 import {
@@ -31,7 +31,7 @@ import { useRouter } from 'next/navigation';
 const FAQS = [
   {
     q: 'How does the 1.5% fixed monthly base yield operate?',
-    a: 'Each investor co-owns physical registered livestock assets. The 1.5% monthly base yield (18% annualized) is generated from our institutional dairy operations and guaranteed against biological dry-off gaps by our 145% Yield Reserve Escrow Buffer.',
+    a: 'Each investor co-owns physical registered livestock assets. The 1.5% monthly base yield (18% annualized) is simulated from dairy operations and supported against biological dry-off gaps by our 145% Yield Reserve Buffer model.',
   },
   {
     q: 'How is the milk performance bonus calculated?',
@@ -39,7 +39,7 @@ const FAQS = [
   },
   {
     q: 'What protections exist against livestock illness or mortality?',
-    a: 'Every cattle asset is 100% insured against mortality by The New India Assurance Co. Ltd. In addition, routine veterinary exams, 24/7 smart-collar biometrics, and quarantined medical paddocks ensure clinical health.',
+    a: 'Livestock assets are backed by operational mortality insurance policies. In addition, routine veterinary exams, 24/7 smart-collar biometrics, and quarantined medical paddocks ensure clinical herd health.',
   },
   {
     q: 'Can I visit the farm and see my allocated cattle?',
@@ -50,6 +50,17 @@ const FAQS = [
 export default function ConsumerInvestPage() {
   const { user, upgradeToInvestor, switchRole } = useAuth();
   const router = useRouter();
+
+  // Dynamic published plans
+  const [plans, setPlans] = useState<InvestmentPlanConfig[]>([]);
+
+  useEffect(() => {
+    async function loadPublishedPlans() {
+      const published = await investmentService.getPlans();
+      setPlans(published);
+    }
+    loadPublishedPlans();
+  }, []);
 
   // Calculator State
   const [calcAmount, setCalcAmount] = useState(250000);
@@ -225,10 +236,10 @@ export default function ConsumerInvestPage() {
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-200 space-y-1">
-                    <p className="font-semibold text-slate-900">Capital Protection Disclosures:</p>
-                    <p>• 100% Livestock Mortality Insured (New India Assurance)</p>
-                    <p>• 145% Yield Reserve Escrow Liquidity Buffer</p>
-                    <p>• Independent Agritech Audits by Deloitte</p>
+                    <p className="font-semibold text-slate-900">Capital Model Disclosures (Simulation):</p>
+                    <p>• Illustrative Livestock Mortality Risk Protection Model</p>
+                    <p>• 145% Yield Reserve Escrow Liquidity Buffer Simulation</p>
+                    <p>• Internal Operational Agritech Farm Audits</p>
                   </div>
                 </div>
 
@@ -281,12 +292,12 @@ export default function ConsumerInvestPage() {
               Institutional Co-Ownership Plans
             </h2>
             <Badge variant="outline" className="border-forest-600 text-forest-700 bg-forest-50">
-              Accepting Allocations
+              Published Allocations
             </Badge>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {INVESTMENT_PLANS.map((plan) => (
+            {plans.map((plan) => (
               <Card key={plan.id} className="border-slate-200 bg-white shadow-sm flex flex-col justify-between">
                 <div>
                   <CardHeader className="border-b border-slate-100 pb-4">

@@ -135,7 +135,7 @@ export default function PortfolioPage() {
                 <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-2xl font-bold text-slate-900">100% Policy</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">The New India Assurance</p>
+                <p className="text-xs text-slate-500 mt-1">Operational Mortality Coverage (Model)</p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
                 <ShieldCheck className="w-6 h-6" />

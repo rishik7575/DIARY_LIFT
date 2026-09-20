@@ -358,12 +358,12 @@ export default function InvestorDashboard() {
                         <span className="font-semibold text-slate-900">₹2.80 Crores</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-100">
-                        <span>Mortality Insurance:</span>
-                        <span className="font-semibold text-slate-900">The New India Assurance</span>
+                        <span>Mortality Coverage:</span>
+                        <span className="font-semibold text-slate-900">National Livestock Policy (Model)</span>
                       </div>
                       <div className="flex justify-between py-1">
-                        <span>Independent Auditor:</span>
-                        <span className="font-semibold text-slate-900 text-right">Deloitte Agritech Assurance</span>
+                        <span>Assurance Review:</span>
+                        <span className="font-semibold text-slate-900 text-right">Internal Agritech Review (Simulated)</span>
                       </div>
                     </div>
 
@@ -569,10 +569,10 @@ export default function InvestorDashboard() {
                       </div>
 
                       <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-200 space-y-1.5">
-                        <p className="font-semibold text-slate-900">Yield Mechanics Disclosures:</p>
-                        <p>• <strong>1.5% Base:</strong> Audited monthly dividend credited on the 1st of each month.</p>
+                        <p className="font-semibold text-slate-900">Yield Mechanics Disclosures (Simulation):</p>
+                        <p>• <strong>1.5% Base:</strong> Monthly dividend credited on the 1st of each month (illustrative model).</p>
                         <p>• <strong>Up to 0.5% Bonus:</strong> Pro-rata bonus calculated from certified parlour meters.</p>
-                        <p>• <strong>Capital Coverage:</strong> 100% mortality policy underwritten by New India Assurance.</p>
+                        <p>• <strong>Capital Coverage:</strong> Livestock mortality risk coverage model backstopped by reserve.</p>
                       </div>
                     </div>
 

@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PortalGuard from '@/components/layout/PortalGuard';
 import PortalLayout from '@/components/layout/PortalLayout';
 import CartDrawer from '@/components/consumer/CartDrawer';
 import ProductCard from '@/components/consumer/ProductCard';
-import { PRODUCTS, CATEGORIES } from '@/lib/mockData/products';
+import { productService, Product } from '@/lib/services';
+import { CATEGORIES } from '@/lib/mockData/products';
 import { useCartStore } from '@/lib/store/cartStore';
 import { Search, TrendingUp, ShoppingCart, Zap, ShieldCheck, Filter, ChevronRight, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,12 +17,21 @@ import Link from 'next/link';
 export default function ConsumerPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
   const { openCart, totalItems, totalPrice } = useCartStore();
+
+  useEffect(() => {
+    async function loadCatalog() {
+      const items = await productService.getProducts();
+      setProducts(items);
+    }
+    loadCatalog();
+  }, []);
 
   const cartCount = totalItems();
   const cartSubtotal = totalPrice();
 
-  const filteredProducts = PRODUCTS.filter((p) => {
+  const filteredProducts = products.filter((p) => {
     const matchCat = activeCategory === 'all' || p.category === activeCategory;
     const matchSearch =
       !searchQuery ||
@@ -42,7 +52,7 @@ export default function ConsumerPage() {
               <Badge className="bg-amber-500/20 text-amber-300 border-amber-400/30 text-[11px] font-semibold">
                 ⭐ Institutional Co-Ownership
               </Badge>
-              <span className="text-xs text-slate-300">SEBI-Compliant Agritech Structure</span>
+              <span className="text-xs text-slate-300">Operational Simulation Model • Illustrative Demo</span>
             </div>
             <h2 className="text-lg md:text-xl font-bold font-serif text-white tracking-tight">
               Love Farm-Fresh Dairy? Co-Own the Cattle that Produces It.

@@ -12,7 +12,7 @@ export const PLATFORM_YIELD_RESERVE_HEALTH: YieldReserveHealth = {
   stabilityIndex: 'OPTIMAL',
   drySeasonBufferAllocatedINR: 28000000,  // ₹2.80 Crores for dry cattle nutrition & vet care
   lastAuditDate: '2026-09-01',
-  auditedBy: 'Deloitte Touche Tohmatsu India LLP (Agritech Assurance Practice)',
+  auditedBy: 'Operational Agritech Assurance Review (Simulation Model)',
 };
 
 export const INVESTOR_PROFILES: InvestorProfile[] = [
@@ -343,7 +343,7 @@ export const INVESTMENT_PACKAGES = [
       '1.5% fixed monthly base yield + up to 0.5% performance bonus',
       'Live IoT collar telemetry & RFID health dashboard',
       'Direct monthly NEFT dividend credit on the 1st',
-      '100% Comprehensive New India Assurance cover',
+      'Operational Livestock Mortality Coverage Model',
     ],
   },
   {

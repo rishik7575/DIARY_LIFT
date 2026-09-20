@@ -21,7 +21,13 @@ import {
   NewHealthReportInput,
 } from '@/lib/services';
 import { CattleAsset, BiologicalStatus } from '@/lib/types/cattle';
-import { DailyMilkLogRecord, VeterinaryAlertFlag, VaccinationScheduleItem, CalfBirthRecord } from '@/lib/types/farm';
+import {
+  DailyMilkLogRecord,
+  VeterinaryAlertFlag,
+  VaccinationScheduleItem,
+  CalfBirthRecord,
+  EnvironmentalSensorAlert,
+} from '@/lib/types/farm';
 import { VACCINATION_SCHEDULE, CALF_BIRTH_RECORDS } from '@/lib/mockData/farm';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { formatDate } from '@/lib/utils';
@@ -42,6 +48,9 @@ import {
   Calendar,
   Layers,
   Thermometer,
+  Fan,
+  Wind,
+  Wrench,
 } from 'lucide-react';
 
 export default function StaffPage() {
@@ -50,9 +59,17 @@ export default function StaffPage() {
   const [cattleList, setCattleList] = useState<CattleAsset[]>([]);
   const [milkLogs, setMilkLogs] = useState<DailyMilkLogRecord[]>([]);
   const [alerts, setAlerts] = useState<VeterinaryAlertFlag[]>([]);
+  const [operationalAlerts, setOperationalAlerts] = useState<EnvironmentalSensorAlert[]>([]);
   const [vaccinations] = useState<VaccinationScheduleItem[]>(VACCINATION_SCHEDULE);
   const [calves] = useState<CalfBirthRecord[]>(CALF_BIRTH_RECORDS);
   const [loading, setLoading] = useState(true);
+
+  // Mitigation Modal state
+  const [mitigationModalOpen, setMitigationModalOpen] = useState(false);
+  const [selectedSensorAlert, setSelectedSensorAlert] = useState<EnvironmentalSensorAlert | null>(null);
+  const [mitigationNotes, setMitigationNotes] = useState(
+    'Activated overhead high-pressure misting lines and increased ridge ventilation fans to 100% capacity. Monitored cattle respiration rates.'
+  );
 
   // Notifications / feedback
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
@@ -98,14 +115,16 @@ export default function StaffPage() {
   useEffect(() => {
     async function loadStaffData() {
       try {
-        const [c, m, a] = await Promise.all([
+        const [c, m, a, op] = await Promise.all([
           cattleService.getAll(),
           milkProductionService.getDailyLogs('2026-09-20'),
           healthService.getAlerts(),
+          farmService.getOperationalAlerts(),
         ]);
         setCattleList(c);
         setMilkLogs(m);
         setAlerts(a);
+        setOperationalAlerts(op);
         if (c.length > 0 && !milkingForm.cattleId) {
           setMilkingForm((prev) => ({ ...prev, cattleId: c[0].id }));
           setHealthForm((prev) => ({ ...prev, cattleId: c[0].id }));
@@ -198,6 +217,41 @@ export default function StaffPage() {
     }
   };
 
+  // Mitigation Action on Environmental / IoT Sensor Alarm
+  const handleOpenMitigation = (alert: EnvironmentalSensorAlert) => {
+    setSelectedSensorAlert(alert);
+    if (alert.sensorType === 'TEMPERATURE') {
+      setMitigationNotes(
+        'Triggered automated shed misters, opened north ventilation louvers to 100%, and verified water trough flow.'
+      );
+    } else if (alert.sensorType === 'HUMIDITY') {
+      setMitigationNotes('Activated cross-ventilation exhaust blowers and distributed dry bedding.');
+    } else {
+      setMitigationNotes('Completed physical inspection and executed standard operating mitigation.');
+    }
+    setMitigationModalOpen(true);
+  };
+
+  const handleMitigateSensorAlert = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSensorAlert) return;
+
+    try {
+      const resolved = await farmService.acknowledgeAndMitigateAlert(
+        selectedSensorAlert.id,
+        mitigationNotes,
+        user?.name || 'Field Shift Operator'
+      );
+      setOperationalAlerts((prev) => prev.map((a) => (a.id === resolved.id ? resolved : a)));
+      setMitigationModalOpen(false);
+      showFeedback(
+        `Mitigation recorded for ${resolved.shedName}. Facility ambient conditions returned to safe operating threshold.`
+      );
+    } catch (err: any) {
+      showFeedback(err.message || 'Failed to submit mitigation action.', true);
+    }
+  };
+
   // Submit Veterinary Report
   const handleHealthReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -247,8 +301,12 @@ export default function StaffPage() {
   // Summary Metrics
   const todayTotalLiters = milkLogs.reduce((acc, log) => acc + log.totalDailyYieldLiters, 0);
   const gradeAPlusCount = milkLogs.filter((log) => log.quality.microbialQualityGrade === 'Grade-A+').length;
-  const activeAlertsCount = alerts.filter((a) => a.status !== 'RESOLVED').length;
-  const criticalCount = alerts.filter((a) => a.severity === 'CRITICAL' && a.status !== 'RESOLVED').length;
+  const activeVetAlertsCount = alerts.filter((a) => a.status !== 'RESOLVED').length;
+  const activeSensorAlertsCount = operationalAlerts.filter((a) => a.status !== 'RESOLVED').length;
+  const totalActiveAlertsCount = activeVetAlertsCount + activeSensorAlertsCount;
+  const criticalCount =
+    alerts.filter((a) => a.severity === 'CRITICAL' && a.status !== 'RESOLVED').length +
+    operationalAlerts.filter((a) => a.severity === 'CRITICAL' && a.status !== 'RESOLVED').length;
 
   const filteredCattle = cattleList.filter((c) => {
     const matchesSearch =
@@ -372,14 +430,16 @@ export default function StaffPage() {
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Vet/IoT Alerts</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{activeAlertsCount}</span>
+                  <span className="text-2xl font-bold text-slate-900">{totalActiveAlertsCount}</span>
                   {criticalCount > 0 && (
                     <span className="text-xs font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
                       {criticalCount} Critical
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-500 mt-1">Collar Biometrics & Flags</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {activeSensorAlertsCount} Sensor • {activeVetAlertsCount} Vet Flags
+                </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
                 <Activity className="w-6 h-6" />
@@ -414,7 +474,7 @@ export default function StaffPage() {
               </TabsTrigger>
               <TabsTrigger value="health" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Activity className="w-4 h-4 mr-2" />
-                Veterinary & IoT Alerts ({activeAlertsCount})
+                Veterinary & IoT Alerts ({totalActiveAlertsCount})
               </TabsTrigger>
               <TabsTrigger value="herd" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Layers className="w-4 h-4 mr-2" />
@@ -615,86 +675,206 @@ export default function StaffPage() {
               </div>
             </TabsContent>
 
-            {/* TAB 2: VETERINARY & IOT ALERTS */}
+            {/* TAB 2: VETERINARY & IOT ENVIRONMENTAL ALERTS */}
             <TabsContent value="health" className="space-y-6">
-              <div className="grid grid-cols-1 gap-4">
-                {alerts.map((alert) => {
-                  const isResolved = alert.status === 'RESOLVED';
-                  const isCritical = alert.severity === 'CRITICAL';
-                  const isHigh = alert.severity === 'HIGH';
+              
+              {/* SECTION A: IoT Barn Environmental & Facility Telemetry Alerts */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Thermometer className="w-5 h-5 text-forest-700" />
+                    <h3 className="text-base font-bold text-slate-900">
+                      IoT Environmental & Climate Threshold Alerts ({activeSensorAlertsCount} Active)
+                    </h3>
+                  </div>
+                  <Badge variant="outline" className="border-forest-600/40 text-forest-700 bg-forest-50 text-xs">
+                    Live Farm Sensor Bus
+                  </Badge>
+                </div>
 
-                  return (
-                    <Card
-                      key={alert.id}
-                      className={`border ${
-                        isResolved
-                          ? 'border-slate-200 bg-white opacity-75'
-                          : isCritical
-                          ? 'border-red-300 bg-red-50/40 shadow-sm'
-                          : isHigh
-                          ? 'border-amber-300 bg-amber-50/40 shadow-sm'
-                          : 'border-slate-200 bg-white'
-                      }`}
-                    >
-                      <CardContent className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge
-                              className={
-                                isCritical
-                                  ? 'bg-red-600 text-white'
-                                  : isHigh
-                                  ? 'bg-amber-500 text-white'
-                                  : 'bg-slate-700 text-white'
-                              }
-                            >
-                              {alert.severity}
-                            </Badge>
-                            <span className="font-bold text-slate-900">{alert.headline}</span>
-                            <span className="text-xs text-slate-500 font-mono">[{alert.id}]</span>
-                          </div>
-
-                          <p className="text-sm text-slate-700">{alert.detailedDiagnosis}</p>
-
-                          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
-                            <span className="flex items-center gap-1 font-medium">
-                              <Thermometer className="w-3.5 h-3.5 text-slate-500" />
-                              Telemetry: {alert.telemetrySnapshot.metricName} = {alert.telemetrySnapshot.recordedValue}
-                            </span>
-                            <span>Target Range: {alert.telemetrySnapshot.referenceRange}</span>
-                            <span>Assigned Vet: {alert.assignedVeterinarian}</span>
-                            <span>Asset: {alert.cattleName} ({alert.rfidTag})</span>
-                          </div>
-
-                          {alert.treatmentProtocolPrescribed && (
-                            <div className="text-xs bg-white/80 p-2.5 rounded border border-slate-200 text-slate-700">
-                              <span className="font-semibold text-slate-800">Protocol:</span>{' '}
-                              {alert.treatmentProtocolPrescribed}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-                          {isResolved ? (
-                            <Badge variant="outline" className="border-forest-600 text-forest-700 bg-forest-50 py-1 px-3">
-                              <Check className="w-3.5 h-3.5 mr-1" />
-                              Resolved
-                            </Badge>
-                          ) : (
-                            <Button
-                              variant="forest"
-                              size="sm"
-                              onClick={() => handleAcknowledgeAlert(alert.id)}
-                              className="bg-forest-700 hover:bg-forest-800 text-white"
-                            >
-                              Acknowledge & Treat
-                            </Button>
-                          )}
-                        </div>
+                <div className="grid grid-cols-1 gap-4">
+                  {operationalAlerts.length === 0 ? (
+                    <Card className="border-slate-200 bg-white">
+                      <CardContent className="p-6 text-center text-sm text-slate-500">
+                        All facility environmental sensors (temperature, humidity, water flow) are operating within normal limits.
                       </CardContent>
                     </Card>
-                  );
-                })}
+                  ) : (
+                    operationalAlerts.map((opAlert) => {
+                      const isResolved = opAlert.status === 'RESOLVED';
+                      const isCritical = opAlert.severity === 'CRITICAL';
+
+                      return (
+                        <Card
+                          key={opAlert.id}
+                          className={`border transition-all ${
+                            isResolved
+                              ? 'border-emerald-200 bg-emerald-50/20'
+                              : isCritical
+                              ? 'border-red-400 bg-red-50/70 shadow-md ring-1 ring-red-400/50'
+                              : 'border-amber-400 bg-amber-50/60 shadow-md ring-1 ring-amber-400/50'
+                          }`}
+                        >
+                          <CardContent className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge
+                                  className={
+                                    isResolved
+                                      ? 'bg-emerald-600 text-white'
+                                      : isCritical
+                                      ? 'bg-red-600 text-white animate-pulse'
+                                      : 'bg-amber-600 text-white animate-pulse'
+                                  }
+                                >
+                                  {isResolved ? 'RESOLVED' : `${opAlert.severity} THRESHOLD BREACH`}
+                                </Badge>
+                                <span className="font-bold text-slate-900 text-base">
+                                  {opAlert.metricLabel}: {opAlert.currentValue}{opAlert.unit} (Threshold: {opAlert.thresholdValue}{opAlert.unit})
+                                </span>
+                                <span className="text-xs text-slate-500 font-mono">[{opAlert.sensorId}]</span>
+                              </div>
+
+                              <div className="text-sm text-slate-700">
+                                <strong>Facility Location:</strong> {opAlert.facilityName} • <strong>Target Unit:</strong> {opAlert.shedName}
+                              </div>
+
+                              {!isResolved ? (
+                                <div className="p-2.5 rounded bg-amber-100/70 border border-amber-200 text-xs text-amber-900 font-medium">
+                                  ⚠️ High heat stress index detected. Animal respiration and feed intake may be compromised. Operational protocol requires immediate mister activation and ventilation adjustment.
+                                </div>
+                              ) : (
+                                <div className="p-2.5 rounded bg-emerald-100/70 border border-emerald-200 text-xs text-emerald-900">
+                                  <div className="font-semibold flex items-center gap-1 text-emerald-800">
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    Mitigated by {opAlert.acknowledgedBy} at {formatDate(opAlert.resolvedAt || opAlert.triggeredAt)}
+                                  </div>
+                                  <div className="mt-1 text-slate-700">
+                                    <strong>Mitigation Log:</strong> {opAlert.mitigationActionTaken}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2 self-start md:self-center shrink-0">
+                              {isResolved ? (
+                                <Badge variant="outline" className="border-emerald-600 text-emerald-700 bg-emerald-50 py-1.5 px-3 font-semibold">
+                                  <Check className="w-4 h-4 mr-1 text-emerald-700" />
+                                  Conditions Nominal
+                                </Badge>
+                              ) : (
+                                <Button
+                                  variant="forest"
+                                  size="sm"
+                                  onClick={() => handleOpenMitigation(opAlert)}
+                                  className="bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow-sm"
+                                >
+                                  <Wrench className="w-4 h-4 mr-1.5" />
+                                  Record Mitigation Action
+                                </Button>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* SECTION B: Veterinary Biometric Clinical Alerts (Smart Collar Telemetry) */}
+              <div className="space-y-4 pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-forest-700" />
+                    <h3 className="text-base font-bold text-slate-900">
+                      Veterinary Biometric & Health Alerts ({activeVetAlertsCount} Active)
+                    </h3>
+                  </div>
+                  <Badge variant="outline" className="border-slate-300 text-slate-600 text-xs">
+                    Smart Collar Telemetry
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {alerts.map((alert) => {
+                    const isResolved = alert.status === 'RESOLVED';
+                    const isCritical = alert.severity === 'CRITICAL';
+                    const isHigh = alert.severity === 'HIGH';
+
+                    return (
+                      <Card
+                        key={alert.id}
+                        className={`border ${
+                          isResolved
+                            ? 'border-slate-200 bg-white opacity-75'
+                            : isCritical
+                            ? 'border-red-300 bg-red-50/40 shadow-sm'
+                            : isHigh
+                            ? 'border-amber-300 bg-amber-50/40 shadow-sm'
+                            : 'border-slate-200 bg-white'
+                        }`}
+                      >
+                        <CardContent className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge
+                                className={
+                                  isCritical
+                                    ? 'bg-red-600 text-white'
+                                    : isHigh
+                                    ? 'bg-amber-500 text-white'
+                                    : 'bg-slate-700 text-white'
+                                }
+                              >
+                                {alert.severity}
+                              </Badge>
+                              <span className="font-bold text-slate-900">{alert.headline}</span>
+                              <span className="text-xs text-slate-500 font-mono">[{alert.id}]</span>
+                            </div>
+
+                            <p className="text-sm text-slate-700">{alert.detailedDiagnosis}</p>
+
+                            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                              <span className="flex items-center gap-1 font-medium">
+                                <Thermometer className="w-3.5 h-3.5 text-slate-500" />
+                                Telemetry: {alert.telemetrySnapshot.metricName} = {alert.telemetrySnapshot.recordedValue}
+                              </span>
+                              <span>Target Range: {alert.telemetrySnapshot.referenceRange}</span>
+                              <span>Assigned Vet: {alert.assignedVeterinarian}</span>
+                              <span>Asset: {alert.cattleName} ({alert.rfidTag})</span>
+                            </div>
+
+                            {alert.treatmentProtocolPrescribed && (
+                              <div className="text-xs bg-white/80 p-2.5 rounded border border-slate-200 text-slate-700">
+                                <span className="font-semibold text-slate-800">Protocol:</span>{' '}
+                                {alert.treatmentProtocolPrescribed}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2 self-start md:self-center shrink-0">
+                            {isResolved ? (
+                              <Badge variant="outline" className="border-forest-600 text-forest-700 bg-forest-50 py-1 px-3">
+                                <Check className="w-3.5 h-3.5 mr-1" />
+                                Resolved
+                              </Badge>
+                            ) : (
+                              <Button
+                                variant="forest"
+                                size="sm"
+                                onClick={() => handleAcknowledgeAlert(alert.id)}
+                                className="bg-forest-700 hover:bg-forest-800 text-white"
+                              >
+                                Acknowledge & Treat
+                              </Button>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
             </TabsContent>
 
@@ -1004,6 +1184,87 @@ export default function StaffPage() {
                 </Button>
               </div>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Operational Sensor Mitigation Action Dialog */}
+        <Dialog open={mitigationModalOpen} onOpenChange={setMitigationModalOpen}>
+          <DialogContent className="max-w-lg bg-white p-6 border-slate-200">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Wrench className="w-5 h-5 text-amber-600" />
+                Record Sensor Mitigation Action
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-500">
+                Log physical or automated intervention taken to return facility conditions to safe thresholds.
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedSensorAlert && (
+              <form onSubmit={handleMitigateSensorAlert} className="space-y-4 mt-2">
+                <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-slate-700">Sensor Alarm:</span>
+                    <span className="font-mono text-red-600 font-bold">
+                      {selectedSensorAlert.metricLabel} = {selectedSensorAlert.currentValue}{selectedSensorAlert.unit}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600">Location:</span>
+                    <span className="text-slate-800 font-medium">
+                      {selectedSensorAlert.facilityName} ({selectedSensorAlert.shedName})
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600">Standard Threshold:</span>
+                    <span className="font-mono text-slate-800">
+                      ≤ {selectedSensorAlert.thresholdValue}{selectedSensorAlert.unit}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">
+                    Mitigation Action Taken (Required for Audit Trail)
+                  </Label>
+                  <textarea
+                    value={mitigationNotes}
+                    onChange={(e) => setMitigationNotes(e.target.value)}
+                    rows={4}
+                    className="w-full mt-1.5 p-3 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-forest-600"
+                    placeholder="Describe specific actions taken (e.g. turned on misting line, opened baffle louvers, checked coolant pump)..."
+                    required
+                  />
+                </div>
+
+                <div className="p-3 bg-amber-50 rounded border border-amber-200 text-xs text-amber-900 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-amber-700 mt-0.5" />
+                  <span>
+                    Submitting this form records your operator ID ({user?.name || 'Staff'}), resolves the alarm in the central ERP, and recalibrates ambient sensor reading to normal nominal levels (28.5°C).
+                  </span>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setMitigationModalOpen(false)}
+                    className="border-slate-300"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="forest"
+                    size="sm"
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+                  >
+                    Confirm & Resolve Alarm
+                  </Button>
+                </div>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
 

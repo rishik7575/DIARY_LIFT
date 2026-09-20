@@ -117,3 +117,39 @@ export interface CalfBirthRecord {
   name?: string;
 }
 
+export type SensorType = 'TEMPERATURE' | 'HUMIDITY' | 'WATER_FLOW' | 'CHILLER_TEMP';
+
+export interface EnvironmentalSensorAlert {
+  id: string;
+  facilityId: string;
+  facilityName: string;
+  shedId: string;
+  shedName: string;
+  sensorId: string;
+  sensorType: SensorType;
+  metricLabel: string;
+  currentValue: number;
+  thresholdValue: number;
+  unit: string;
+  severity: 'CRITICAL' | 'HIGH' | 'WARNING';
+  status: 'TRIGGERED' | 'NOTIFIED' | 'ACKNOWLEDGED' | 'RESOLVED';
+  triggeredAt: string;
+  acknowledgedAt?: string;
+  acknowledgedBy?: string;
+  resolvedAt?: string;
+  mitigationActionTaken?: string;
+}
+
+export interface FarmFacilityThresholdConfig {
+  facilityId: string;
+  facilityName: string;
+  maxTemperatureCelsius: number;       // e.g. 30.0°C
+  maxHumidityPercent: number;          // e.g. 75%
+  minWaterFlowLpm: number;             // e.g. 45 LPM
+  chillerMaxTempCelsius: number;       // e.g. 4.0°C
+  emergencyMistingActive: boolean;
+  ventilationFanSpeedPercent: number;  // 0 - 100%
+  lastUpdated: string;
+}
+
+

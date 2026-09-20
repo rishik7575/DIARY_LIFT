@@ -75,3 +75,33 @@ export interface InvestorProfile {
   bankDetails: BankAccountDetails;
   portfolio: InvestorPortfolio;
 }
+
+export type PlanLifecycleStatus = 'DRAFT' | 'IN_REVIEW' | 'PUBLISHED' | 'ARCHIVED';
+
+export interface PlanAuditLogEntry {
+  timestamp: string;
+  action: string;
+  author: string;
+  diffSummary: string;
+  previousStatus?: PlanLifecycleStatus;
+  newStatus?: PlanLifecycleStatus;
+}
+
+export interface InvestmentPlanConfig {
+  id: string;
+  name: string;
+  minimumContributionINR: number;
+  tenureMonths: number;
+  baselineMonthlyYieldRate: number;     // 0.015 = 1.5% monthly base
+  performanceBonusCeiling: number;      // 0.005 = 0.5% max dynamic bonus
+  targetCattleAllocation: string;
+  riskCategory: 'Low-Medium' | 'Medium' | 'Conservative';
+  illustrativeAnnualRunRateAPY: string; // '18.0% - 24.0% APY (Illustrative Demo)'
+  riskDisclosureText: string;
+  lifecycleStatus: PlanLifecycleStatus;
+  version: string;
+  effectiveDate: string;
+  affectsExistingInvestors: boolean;   // false prevents retroactively altering existing agreements
+  auditHistory: PlanAuditLogEntry[];
+}
+
