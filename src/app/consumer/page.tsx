@@ -1,0 +1,178 @@
+'use client';
+
+import React, { useState } from 'react';
+import PortalGuard from '@/components/layout/PortalGuard';
+import PortalLayout from '@/components/layout/PortalLayout';
+import CartDrawer from '@/components/consumer/CartDrawer';
+import ProductCard from '@/components/consumer/ProductCard';
+import { PRODUCTS, CATEGORIES } from '@/lib/mockData/products';
+import { useCartStore } from '@/lib/store/cartStore';
+import { Search, TrendingUp, ShoppingCart, Zap, ShieldCheck, Filter, ChevronRight, Award } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+
+export default function ConsumerPage() {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const { openCart, totalItems, totalPrice } = useCartStore();
+
+  const cartCount = totalItems();
+  const cartSubtotal = totalPrice();
+
+  const filteredProducts = PRODUCTS.filter((p) => {
+    const matchCat = activeCategory === 'all' || p.category === activeCategory;
+    const matchSearch =
+      !searchQuery ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  return (
+    <PortalGuard allowedRoles={['consumer', 'investor', 'admin']}>
+      <PortalLayout allowedRoles={['consumer', 'investor', 'admin']}>
+        <CartDrawer />
+
+        {/* Co-ownership Promotional Banner */}
+        <div className="bg-gradient-to-r from-slate-900 via-forest-950 to-slate-900 text-white rounded-2xl p-4 md:p-6 mb-8 border border-forest-800/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-amber-500/20 text-amber-300 border-amber-400/30 text-[11px] font-semibold">
+                ⭐ Institutional Co-Ownership
+              </Badge>
+              <span className="text-xs text-slate-300">SEBI-Compliant Agritech Structure</span>
+            </div>
+            <h2 className="text-lg md:text-xl font-bold font-serif text-white tracking-tight">
+              Love Farm-Fresh Dairy? Co-Own the Cattle that Produces It.
+            </h2>
+            <p className="text-xs text-slate-300 max-w-2xl">
+              Earn a fixed <strong>1.5% monthly base yield (18% APY)</strong> plus dynamic performance milk bonuses, backstopped by our 145% Yield Reserve Health fund.
+            </p>
+          </div>
+
+          <Link href="/consumer/invest" className="shrink-0">
+            <Button
+              variant="forest"
+              size="sm"
+              className="bg-forest-600 hover:bg-forest-500 text-white font-semibold text-xs py-2 px-4 shadow-sm"
+            >
+              Explore Cattle Co-Ownership <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </Link>
+        </div>
+
+        {/* Storefront Header & Filter Bar */}
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+                Fresh Farm Catalog
+              </h1>
+              <p className="text-sm text-slate-600 mt-1">
+                A2 Gir Cow Milk, Hand-Churned Bilona Ghee, and Cultured Dairy delivered in under 15 minutes.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Cart trigger button */}
+              <Button
+                variant="forest"
+                onClick={openCart}
+                className="bg-forest-700 hover:bg-forest-800 text-white font-medium flex items-center gap-2 relative shadow-sm"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span>Cart ({cartCount})</span>
+                {cartCount > 0 && (
+                  <span className="bg-amber-500 text-slate-900 text-[11px] font-bold px-1.5 py-0.5 rounded-full ml-1">
+                    ₹{cartSubtotal}
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Search and Category Filter Strip */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+              <Input
+                type="text"
+                placeholder="Search milk, bilona ghee, paneer..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-10 border-slate-300 text-sm bg-white"
+              />
+            </div>
+
+            {/* Category Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+                    activeCategory === cat.id
+                      ? 'bg-forest-700 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Value propositions banner */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2">
+            <div className="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-3 shadow-xs">
+              <div className="w-8 h-8 rounded-lg bg-forest-50 flex items-center justify-center text-forest-700 shrink-0">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div className="text-xs">
+                <strong className="text-slate-900 block">Sub-15 Minute EV Dispatch</strong>
+                <span className="text-slate-500">Insulated cold crates at 3.5°C</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-3 shadow-xs">
+              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-700 shrink-0">
+                <Award className="w-4 h-4" />
+              </div>
+              <div className="text-xs">
+                <strong className="text-slate-900 block">100% Pure Indigenous A2</strong>
+                <span className="text-slate-500">Zero synthetic hormones or oxytocin</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-white border border-slate-200 rounded-xl flex items-center gap-3 shadow-xs">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div className="text-xs">
+                <strong className="text-slate-900 block">RFID & Lab Certified</strong>
+                <span className="text-slate-500">Traceable to individual cows</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-2">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {filteredProducts.length === 0 && (
+            <div className="py-16 text-center text-slate-500 bg-white rounded-2xl border border-slate-200">
+              <p className="text-base font-semibold">No products found matching "{searchQuery}"</p>
+              <p className="text-xs text-slate-400 mt-1">Try clearing your search query or selecting another category.</p>
+            </div>
+          )}
+
+        </div>
+      </PortalLayout>
+    </PortalGuard>
+  );
+}
