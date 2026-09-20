@@ -6,8 +6,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth, UserRole } from '@/lib/auth/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { farmService } from '@/lib/services';
-import { EnvironmentalSensorAlert } from '@/lib/types/farm';
+import { farmService } from '@/lib/services/farmService';
+import { notificationService } from '@/lib/services/notificationService';
+import NotificationCenter from '@/components/layout/NotificationCenter';
 import {
   Milk,
   TrendingUp,
@@ -22,54 +23,78 @@ import {
   Bell,
   AlertTriangle,
   Activity,
-  CheckCircle2,
-  ExternalLink,
   Layers,
   Thermometer,
+  Package,
+  FileText,
+  Users,
+  Settings,
+  HelpCircle,
+  CheckCircle2,
+  ChevronDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-  badge?: string;
+interface NavGroup {
+  groupName: string;
+  items: {
+    label: string;
+    href: string;
+    icon: React.ElementType;
+    badge?: string;
+    roles?: UserRole[];
+  }[];
 }
 
-const ROLE_NAV_CONFIG: Record<UserRole, { portalTitle: string; items: NavItem[] }> = {
-  consumer: {
-    portalTitle: 'Consumer Quick-Store',
+const NAV_GROUPS: NavGroup[] = [
+  {
+    groupName: 'OVERVIEW',
     items: [
-      { label: 'Farm Catalog', href: '/consumer', icon: ShoppingCart },
-      { label: 'Cattle Co-Ownership', href: '/consumer/invest', icon: TrendingUp, badge: '1.5% Yield' },
+      { label: 'Admin Command', href: '/admin', icon: ShieldAlert, roles: ['admin'] },
+      { label: 'Staff Operations', href: '/staff', icon: ClipboardList, roles: ['staff', 'admin'] },
+      { label: 'Investor Suite', href: '/investor', icon: TrendingUp, roles: ['investor', 'admin'] },
+      { label: 'Fresh Storefront', href: '/consumer', icon: ShoppingCart, roles: ['consumer', 'investor', 'admin'] },
     ],
   },
-  investor: {
-    portalTitle: 'Investor Financial Suite',
+  {
+    groupName: 'OPERATIONS',
     items: [
-      { label: 'Portfolio Overview', href: '/investor', icon: TrendingUp },
-      { label: 'Allocated Cattle Units', href: '/investor/portfolio', icon: Milk },
+      { label: 'Farms & Sheds', href: '/admin#farms', icon: Layers, roles: ['admin', 'staff'] },
+      { label: 'Cattle Registry', href: '/staff#herd', icon: Milk, roles: ['admin', 'staff'] },
+      { label: 'Milking Parlour', href: '/staff#milking', icon: Activity, roles: ['admin', 'staff'] },
+      { label: 'IoT Environment', href: '/staff#health', icon: Thermometer, badge: 'Live', roles: ['admin', 'staff'] },
     ],
   },
-  staff: {
-    portalTitle: 'Farm Operations ERP',
+  {
+    groupName: 'INVESTMENT',
     items: [
-      { label: 'Operations Command', href: '/staff', icon: ClipboardList },
+      { label: 'Co-Ownership Plans', href: '/admin#plans', icon: FileText, roles: ['admin'] },
+      { label: 'My Portfolio', href: '/investor/portfolio', icon: TrendingUp, roles: ['investor', 'admin'] },
+      { label: 'Plan Discovery', href: '/consumer/invest', icon: Milk, roles: ['consumer', 'investor', 'admin'] },
     ],
   },
-  admin: {
-    portalTitle: 'Master Command Center',
+  {
+    groupName: 'COMMERCE',
     items: [
-      { label: 'Executive Analytics & Sensor Ops', href: '/admin', icon: ShieldAlert },
+      { label: 'Dairy Catalog', href: '/consumer', icon: Package, roles: ['consumer', 'investor', 'admin'] },
+      { label: 'Store Pricing', href: '/admin#products', icon: Settings, roles: ['admin'] },
+      { label: 'Order Fulfillment', href: '/admin#orders', icon: ShoppingCart, roles: ['admin'] },
     ],
   },
-};
+  {
+    groupName: 'SYSTEM',
+    items: [
+      { label: 'Role Governance', href: '/admin#roles', icon: Users, roles: ['admin'] },
+      { label: 'Compliance & Legal', href: '/legal', icon: ShieldCheck },
+    ],
+  },
+];
 
-const ALL_PORTALS = [
-  { role: 'admin' as UserRole, label: 'Master Admin', path: '/admin' },
-  { role: 'staff' as UserRole, label: 'Farm Staff', path: '/staff' },
-  { role: 'investor' as UserRole, label: 'Investor Suite', path: '/investor' },
-  { role: 'consumer' as UserRole, label: 'Consumer Store', path: '/consumer' },
+const ALL_ROLES: { role: UserRole; label: string; path: string }[] = [
+  { role: 'admin', label: 'Master Admin', path: '/admin' },
+  { role: 'staff', label: 'Farm Staff', path: '/staff' },
+  { role: 'investor', label: 'Investor Suite', path: '/investor' },
+  { role: 'consumer', label: 'Consumer Store', path: '/consumer' },
 ];
 
 export default function PortalLayout({
@@ -79,357 +104,315 @@ export default function PortalLayout({
   children: React.ReactNode;
   allowedRoles?: UserRole[];
 }) {
-  const { user, logout, switchRole } = useAuth();
+  const { user, switchRole, logout } = useAuth();
+  const currentRole: UserRole = user?.role || 'consumer';
   const pathname = usePathname();
   const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [activeAlerts, setActiveAlerts] = useState<EnvironmentalSensorAlert[]>([]);
 
-  const currentRole: UserRole = user?.role || 'investor';
-  const navConfig = ROLE_NAV_CONFIG[currentRole] || ROLE_NAV_CONFIG.investor;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   useEffect(() => {
     async function loadAlerts() {
       try {
-        const alerts = await farmService.getOperationalAlerts();
-        setActiveAlerts(alerts.filter((a) => a.status !== 'RESOLVED'));
+        const count = await notificationService.getUnreadCount();
+        setUnreadCount(count);
       } catch (e) {
-        console.error('Failed to load operational alerts for topbar:', e);
+        console.error('Failed to load alerts count', e);
       }
     }
     loadAlerts();
-  }, [pathname]);
+    const interval = setInterval(loadAlerts, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/auth');
+  const handleRoleSelect = (role: UserRole, targetPath: string) => {
+    switchRole(role);
+    router.push(targetPath);
+    setMobileMenuOpen(false);
   };
 
-  const handleRoleSwitch = (newRole: UserRole) => {
-    switchRole(newRole);
-    setMobileOpen(false);
+  const getBreadcrumbs = () => {
+    if (pathname.startsWith('/admin')) return ['DairyLift ERP', 'Master Command', 'Operations Overview'];
+    if (pathname.startsWith('/staff')) return ['DairyLift ERP', 'Farm Operations', 'Shift Parlour'];
+    if (pathname.startsWith('/investor')) return ['DairyLift Wealth', 'Investor Suite', 'Asset Performance'];
+    if (pathname.startsWith('/consumer/invest')) return ['DairyLift Commerce', 'Livestock Co-Ownership', 'Plan Explorer'];
+    if (pathname.startsWith('/consumer')) return ['DairyLift Commerce', 'Quick Store', 'A2 Fresh Dairy'];
+    if (pathname.startsWith('/legal')) return ['DairyLift Platform', 'Governance', 'Regulatory Disclosures'];
+    return ['DairyLift Platform', 'Portal'];
   };
+
+  const breadcrumbs = getBreadcrumbs();
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col antialiased text-slate-900">
+    <div className="min-h-screen bg-[#FCFCF9] flex flex-col antialiased text-[#0F172A]">
       
-      {/* ═══════════════════════════════════════════════════════════════════
-          PERSISTENT COMPLIANCE & SIMULATION DISCLAIMER BAR
-      ═══════════════════════════════════════════════════════════════════ */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-950 px-4 py-1.5 text-center text-xs font-semibold flex items-center justify-center gap-2">
-        <span className="bg-amber-500 text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
-          Demo Prototype
-        </span>
-        <span>
-          OPERATIONAL SIMULATION DATA — All cattle yields, sensor readings, and returns represent sample modeling. Zero actual financial guarantees.
-        </span>
-      </div>
+      {/* Simulation Watermark Notification Bar */}
+      <aside aria-label="Simulation Environment Warning" className="bg-[#0F172A] text-white text-xs py-2 px-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="dl-simulation-badge">Demo Environment</span>
+          <span className="text-slate-300 font-medium">
+            Operational Simulation Data — Illustrative Dairy Herd Telemetry & Returns
+          </span>
+        </div>
 
-      <div className="flex-1 flex flex-col md:flex-row min-h-0">
-        
-        {/* ═══════════════════════════════════════════════════════════════════
-            MOBILE TOPBAR (Visible only on < md screens)
-        ═══════════════════════════════════════════════════════════════════ */}
-        <header className="md:hidden bg-[#0F172A] text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 z-40">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#166534] flex items-center justify-center text-white">
-              <Milk className="w-4.5 h-4.5" />
-            </div>
-            <span className="font-display text-lg font-bold">
-              DAIRY<span className="text-[#D97706]">-LIFT</span>
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-2">
+        {/* Rapid Portal Switcher */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <span className="text-slate-400 text-[11px] mr-1 hidden sm:inline">Active Portal:</span>
+          {ALL_ROLES.map(({ role, label, path }) => (
             <button
-              type="button"
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="p-2 rounded-lg bg-slate-800 text-slate-200 hover:text-white relative"
-              aria-label="View notifications"
-            >
-              <Bell className="w-4.5 h-4.5" />
-              {activeAlerts.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
-                  {activeAlerts.length}
-                </span>
+              key={role}
+              onClick={() => handleRoleSelect(role, path)}
+              className={cn(
+                'px-2.5 py-1 rounded text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap',
+                currentRole === role
+                  ? 'bg-[#14532D] text-white shadow-xs'
+                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white'
               )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 rounded-lg bg-slate-800 text-slate-200 hover:text-white"
-              aria-label="Toggle navigation menu"
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {label}
             </button>
-          </div>
-        </header>
+          ))}
+        </div>
+      </aside>
 
-        {/* ═══════════════════════════════════════════════════════════════════
-            LEFT SIDEBAR: Deep Slate (#0F172A)
-            Desktop: Fixed width 64 (16rem), zero overlap. Mobile: Drawer
-        ═══════════════════════════════════════════════════════════════════ */}
-        <aside
-          className={cn(
-            'bg-[#0F172A] text-white border-r border-slate-800 flex flex-col justify-between shrink-0 transition-transform duration-200 z-30',
-            'md:w-64 lg:w-72 md:sticky md:top-0 md:h-[calc(100vh-32px)]',
-            mobileOpen ? 'fixed inset-0 top-[85px] flex' : 'hidden md:flex'
-          )}
-        >
-          {/* Top Segment */}
-          <div className="p-5 flex flex-col gap-5 overflow-y-auto">
-            
-            {/* Brand Heading */}
-            <Link href="/" className="hidden md:flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#166534] to-[#14532D] flex items-center justify-center text-white shadow-md border border-emerald-500/30 shrink-0">
-                <Milk className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="font-display text-xl font-black tracking-tight text-white block leading-none">
-                  DAIRY<span className="text-[#D97706]">-LIFT</span>
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 mt-1 block">
-                  Enterprise Dairy ERP
-                </span>
-              </div>
-            </Link>
+      {/* Main Framework Container */}
+      <div className="flex-1 flex flex-row min-h-0 w-full">
+        
+        {/* DESKTOP SIDEBAR: Strict ~250px Width */}
+        <aside className="hidden lg:flex w-[250px] shrink-0 flex-col bg-white border-r border-[#E2E8F0] select-none justify-between h-[calc(100vh-41px)] sticky top-0">
+          
+          <div className="flex flex-col flex-1 overflow-y-auto">
+            {/* Brand Logo & Unit Identity */}
+            <div className="p-5 border-b border-[#E2E8F0] bg-white">
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <div className="w-9 h-9 rounded-xl bg-[#14532D] flex items-center justify-center text-white shadow-sm group-hover:bg-[#0B3B24] transition-colors">
+                  <Milk className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-serif font-bold text-lg text-[#0F172A] tracking-tight block">
+                    DairyLift
+                  </span>
+                  <span className="text-[10px] uppercase font-bold text-[#14532D] tracking-wider block">
+                    Enterprise Ecosystem
+                  </span>
+                </div>
+              </Link>
 
-            {/* Current Portal Active Badge */}
-            <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Current Portal
-              </div>
-              <div className="text-sm font-bold text-white mt-0.5 flex items-center justify-between">
-                <span className="truncate pr-1">{navConfig.portalTitle}</span>
-                <Badge variant="gold" className="text-[10px] py-0 px-2 uppercase shrink-0">
-                  {currentRole}
-                </Badge>
+              <div className="mt-3 p-2.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs">
+                <span className="text-[10px] text-[#64748B] font-semibold uppercase block">Operating Unit</span>
+                <span className="font-bold text-[#0F172A] truncate block">Nashik High-Tech Park A</span>
               </div>
             </div>
 
-            {/* Navigation Links */}
-            <nav className="flex flex-col gap-1.5">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-1">
-                Portal Navigation
-              </div>
-              {navConfig.items.map((item) => {
-                const isActive = pathname === item.href;
-                const Icon = item.icon;
+            {/* Navigation Groups */}
+            <nav className="p-3 space-y-5 flex-1">
+              {NAV_GROUPS.map((group) => {
+                const visibleItems = group.items.filter(
+                  (item) => !item.roles || item.roles.includes(currentRole)
+                );
+                if (visibleItems.length === 0) return null;
+
                 return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      'flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150',
-                      isActive
-                        ? 'bg-[#166534] text-white shadow-sm font-bold'
-                        : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className={cn('w-4 h-4', isActive ? 'text-white' : 'text-slate-400')} />
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge && (
-                      <Badge variant="gold" className="text-[10px] py-0 px-1.5 font-bold">
-                        {item.badge}
-                      </Badge>
-                    )}
-                  </Link>
+                  <div key={group.groupName} className="space-y-1">
+                    <span className="px-3 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider block mb-1.5">
+                      {group.groupName}
+                    </span>
+                    {visibleItems.map((item) => {
+                      const isActive = pathname === item.href.split('#')[0];
+                      const Icon = item.icon;
+
+                      return (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className={cn(
+                            'flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-colors',
+                            isActive
+                              ? 'bg-[#F0FDF4] text-[#14532D] border border-[#BBF7D0]/60'
+                              : 'text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Icon className={cn('w-4 h-4 shrink-0', isActive ? 'text-[#14532D]' : 'text-[#64748B]')} />
+                            <span>{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <Badge variant="gold" className="text-[9px] py-0 px-1.5 h-4">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
                 );
               })}
             </nav>
+          </div>
 
-            {/* Rapid Portal Switcher */}
-            <div className="pt-3 border-t border-slate-800/90 flex flex-col gap-1.5">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-1">
-                Switch Role Gateway
+          {/* Sidebar Footer / User Identity */}
+          <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-[#14532D] text-white font-bold flex items-center justify-center text-xs shrink-0">
+                  {user?.name ? user.name[0] : 'U'}
+                </div>
+                <div className="truncate">
+                  <span className="text-xs font-bold text-[#0F172A] block truncate">{user?.name || 'Operator'}</span>
+                  <span className="text-[10px] text-[#64748B] capitalize block">{currentRole} Session</span>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-1.5">
-                {ALL_PORTALS.map((p) => (
-                  <button
-                    key={p.role}
-                    type="button"
-                    onClick={() => handleRoleSwitch(p.role)}
-                    className={cn(
-                      'px-2.5 py-2 rounded-lg text-xs font-semibold text-left transition-colors border',
-                      currentRole === p.role
-                        ? 'bg-slate-800 text-[#D97706] border-amber-500/40 font-bold'
-                        : 'bg-slate-900/60 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white'
-                    )}
-                  >
-                    {p.label}
-                  </button>
+
+              <button
+                onClick={logout}
+                title="Logout"
+                className="text-[#64748B] hover:text-[#DC2626] p-1.5 rounded transition-colors cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        {/* WORKSPACE VIEWPORT (Desktop + Mobile) */}
+        <div className="flex-1 flex flex-col min-w-0">
+          
+          {/* HEADER BAR: Breadcrumbs, Action Toolbar, Notifications */}
+          <header className="h-16 px-6 md:px-8 border-b border-[#E2E8F0] bg-white flex items-center justify-between gap-4 sticky top-0 z-30 shadow-2xs">
+            
+            {/* Left: Mobile Toggle & Breadcrumbs */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="lg:hidden p-2 text-[#475569] hover:bg-[#F8FAFC] rounded-lg cursor-pointer"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+
+              <div className="hidden sm:flex items-center gap-2 text-xs text-[#64748B]">
+                {breadcrumbs.map((crumb, idx) => (
+                  <React.Fragment key={crumb}>
+                    {idx > 0 && <span className="text-[#CBD5E1]">/</span>}
+                    <span className={cn(idx === breadcrumbs.length - 1 ? 'font-bold text-[#0F172A]' : 'hover:text-[#0F172A]')}>
+                      {crumb}
+                    </span>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
 
-            {/* Yield Reserve Health Preview Callout */}
-            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs mt-auto">
-              <div className="flex items-center justify-between text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                <span>Reserve Health</span>
-                <span className="text-emerald-400 font-black">145% Stable</span>
-              </div>
-              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                <div className="bg-[#166534] h-full w-[85%] rounded-full" />
-              </div>
-              <span className="text-[10px] text-slate-400 mt-1 block">
-                6.4 mo dry-cycle stress buffer active
-              </span>
-            </div>
-
-          </div>
-
-          {/* Bottom User Profile Section */}
-          <div className="p-4 border-t border-slate-800 bg-[#0B1120] flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-200 shrink-0">
-                {user?.name?.[0] || 'U'}
-              </div>
-              <div className="overflow-hidden min-w-0">
-                <span className="text-xs font-bold text-white block truncate">
-                  {user?.name || 'Demo User'}
-                </span>
-                <span className="text-[10px] text-slate-400 capitalize block truncate">
-                  {user?.role} Access
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              title="Sign Out"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors shrink-0"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-
-        </aside>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            MAIN WORKSPACE CANVAS: Clean light canvas (#FAFAFA)
-            Zero layout overlap, uniform max-w-7xl centered viewport
-        ═══════════════════════════════════════════════════════════════════ */}
-        <main className="flex-1 min-w-0 bg-[#FAFAFA] flex flex-col">
-          
-          {/* Top Header Bar with Breadcrumb & Operational Alert Notification Center */}
-          <div className="bg-white border-b border-slate-200/80 px-6 lg:px-8 py-3 flex items-center justify-between gap-4 sticky top-0 z-20">
-            <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-              <Link href="/" className="hover:text-slate-900 transition-colors">
-                Dairy-Lift
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-slate-800 font-semibold capitalize">{currentRole}</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-slate-900 font-bold">{navConfig.portalTitle}</span>
-            </div>
-
-            <div className="flex items-center gap-3 relative">
-              {/* Operational Alert Notification Bell */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 relative flex items-center gap-1.5 text-xs font-semibold"
-                >
-                  <Bell className="w-4 h-4 text-slate-600" />
-                  <span className="hidden sm:inline">Alerts</span>
-                  {activeAlerts.length > 0 && (
-                    <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
-                      {activeAlerts.length}
-                    </span>
-                  )}
-                </button>
-
-                {/* Notifications Popover Drawer */}
-                {notificationsOpen && (
-                  <div className="absolute right-0 top-11 w-80 sm:w-96 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 space-y-3 animate-fadeIn">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <div className="flex items-center gap-2">
-                        <Thermometer className="w-4 h-4 text-amber-600" />
-                        <span className="font-bold text-xs text-slate-900">Farm IoT Sensor Notifications</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-500">
-                        {activeAlerts.length} Active
-                      </span>
-                    </div>
-
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {activeAlerts.length === 0 ? (
-                        <div className="text-center py-4 text-xs text-slate-500 flex items-center justify-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-forest-700" />
-                          <span>All facility sensors operating within threshold limits.</span>
-                        </div>
-                      ) : (
-                        activeAlerts.map((alert) => (
-                          <div
-                            key={alert.id}
-                            className="p-2.5 rounded-lg bg-red-50/70 border border-red-200 text-xs space-y-1"
-                          >
-                            <div className="flex justify-between items-start">
-                              <span className="font-bold text-red-900">{alert.shedName}</span>
-                              <Badge className="bg-red-600 text-white text-[9px] py-0 px-1 font-bold">
-                                {alert.severity}
-                              </Badge>
-                            </div>
-                            <p className="text-slate-700 text-[11px]">
-                              {alert.metricLabel}: <strong className="text-red-700 font-mono">{alert.currentValue}{alert.unit}</strong> (Threshold: {alert.thresholdValue}{alert.unit})
-                            </p>
-                            <div className="flex justify-between items-center pt-1 border-t border-red-100/60">
-                              <span className="text-[10px] text-slate-500 font-mono">Rule: {alert.sensorType}</span>
-                              <Link
-                                href="/staff"
-                                onClick={() => setNotificationsOpen(false)}
-                                className="text-[11px] font-bold text-forest-700 hover:text-forest-900"
-                              >
-                                Take Action in Staff ERP →
-                              </Link>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 flex justify-between items-center">
-                      <Link
-                        href="/staff"
-                        onClick={() => setNotificationsOpen(false)}
-                        className="text-xs text-slate-600 hover:text-slate-900 font-medium"
-                      >
-                        Staff Action Center
-                      </Link>
-                      <button
-                        onClick={() => setNotificationsOpen(false)}
-                        className="text-xs text-slate-400 hover:text-slate-700"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
+            {/* Right: Notification Center Bell & User Quick Actions */}
+            <div className="flex items-center gap-3">
+              
+              {/* Notification Center Trigger */}
+              <button
+                onClick={() => setNotifOpen(true)}
+                className="relative p-2 text-[#475569] hover:bg-[#F8FAFC] rounded-lg transition-colors cursor-pointer border border-[#E2E8F0]"
+                title="Open Enterprise Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#DC2626] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full min-w-4 text-center animate-pulse">
+                    {unreadCount}
+                  </span>
                 )}
-              </div>
+              </button>
 
-              <Badge variant="outline" className="text-xs font-semibold border-slate-200 text-slate-700 bg-white">
-                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-forest-700" />
-                Live Telemetry Synchronized
-              </Badge>
+              <Link href="/auth">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden md:inline-flex border-[#CBD5E1] text-[#0F172A] hover:bg-[#F8FAFC]"
+                >
+                  <Users className="w-3.5 h-3.5 mr-1.5" />
+                  Role Gateway
+                </Button>
+              </Link>
             </div>
-          </div>
+          </header>
 
-          {/* Content Viewport */}
-          <div className="p-6 md:p-8 lg:p-10 flex-1 max-w-7xl mx-auto w-full">
+          {/* MAIN APPLICATION WORKSPACE CONTENT */}
+          <main className="flex-1 p-6 md:p-8 lg:p-10 max-w-7xl w-full mx-auto space-y-6">
             {children}
-          </div>
-
-        </main>
-
+          </main>
+        </div>
       </div>
 
+      {/* MOBILE DRAWER SHEET */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setMobileMenuOpen(false)} />
+          <div className="relative w-72 max-w-[80vw] bg-white h-full shadow-2xl flex flex-col justify-between p-5 z-10 overflow-y-auto">
+            <div>
+              <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-[#14532D] text-white flex items-center justify-center">
+                    <Milk className="w-4 h-4" />
+                  </div>
+                  <span className="font-serif font-bold text-lg text-[#0F172A]">DairyLift</span>
+                </div>
+                <button onClick={() => setMobileMenuOpen(false)} className="p-1 text-[#64748B]">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-4">
+                {NAV_GROUPS.map((group) => {
+                  const visibleItems = group.items.filter(
+                    (item) => !item.roles || item.roles.includes(currentRole)
+                  );
+                  if (visibleItems.length === 0) return null;
+
+                  return (
+                    <div key={group.groupName} className="space-y-1">
+                      <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block mb-1">
+                        {group.groupName}
+                      </span>
+                      {visibleItems.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-between p-2 rounded text-xs font-semibold text-[#475569] hover:bg-[#F8FAFC]"
+                        >
+                          <div className="flex items-center gap-2">
+                            <item.icon className="w-4 h-4" />
+                            <span>{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <Badge variant="gold" className="text-[9px] py-0 px-1.5 h-4">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#E2E8F0] space-y-2">
+              <Button variant="danger" size="sm" onClick={logout} className="w-full justify-center">
+                <LogOut className="w-3.5 h-3.5 mr-2" />
+                Logout
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shared Notification Center Modal Drawer */}
+      <NotificationCenter
+        open={notifOpen}
+        onOpenChange={setNotifOpen}
+        onUpdateBadge={async () => {
+          const count = await notificationService.getUnreadCount();
+          setUnreadCount(count);
+        }}
+      />
     </div>
   );
 }

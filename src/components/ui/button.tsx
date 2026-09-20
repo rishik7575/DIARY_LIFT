@@ -4,34 +4,42 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-[0.98]',
   {
     variants: {
       variant: {
         default:
-          'bg-[#166534] text-white hover:bg-[#14532D] focus-visible:ring-[#166534] shadow-sm',
+          'bg-[#14532D] text-white hover:bg-[#0B3B24] focus-visible:ring-[#14532D] shadow-sm',
         forest:
-          'bg-[#166534] text-white hover:bg-[#14532D] focus-visible:ring-[#166534] shadow-sm',
-        gold:
-          'bg-[#D97706] text-white hover:bg-[#B45309] focus-visible:ring-[#D97706] shadow-sm font-semibold',
-        destructive:
-          'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600 shadow-sm',
-        outline:
-          'border border-slate-300 bg-white hover:bg-slate-50 hover:text-slate-900 text-slate-800 shadow-xs',
+          'bg-[#14532D] text-white hover:bg-[#0B3B24] focus-visible:ring-[#14532D] shadow-sm',
+        primary:
+          'bg-[#14532D] text-white hover:bg-[#0B3B24] focus-visible:ring-[#14532D] shadow-sm',
         secondary:
-          'bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-xs',
+          'bg-white text-[#0F172A] border border-[#E2E8F0] hover:bg-[#F8FAFC] focus-visible:ring-[#475569] shadow-xs',
+        outline:
+          'bg-white text-[#0F172A] border border-[#CBD5E1] hover:bg-[#F1F5F9] focus-visible:ring-[#475569] shadow-xs',
+        gold:
+          'bg-[#C9962B] text-white hover:bg-[#A67920] focus-visible:ring-[#C9962B] shadow-sm',
+        accent:
+          'bg-[#C9962B] text-white hover:bg-[#A67920] focus-visible:ring-[#C9962B] shadow-sm',
+        destructive:
+          'bg-[#DC2626] text-white hover:bg-[#B91C1C] focus-visible:ring-[#DC2626] shadow-sm',
+        danger:
+          'bg-[#DC2626] text-white hover:bg-[#B91C1C] focus-visible:ring-[#DC2626] shadow-sm',
         ghost:
-          'hover:bg-slate-100 hover:text-slate-900 text-slate-700',
+          'bg-transparent text-[#475569] hover:bg-[#F1F5F9] hover:text-[#0F172A]',
         link:
-          'text-[#166534] underline-offset-4 hover:underline p-0 h-auto',
-        slate:
-          'bg-[#0F172A] text-white hover:bg-slate-800 focus-visible:ring-slate-900 shadow-sm',
+          'text-[#14532D] underline-offset-4 hover:underline p-0 h-auto font-medium',
+        navy:
+          'bg-[#0F172A] text-white hover:bg-[#1E293B] focus-visible:ring-[#0F172A] shadow-sm',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-12 rounded-xl px-6 text-base font-semibold',
-        icon: 'h-10 w-10',
+        default: 'h-11 px-5 py-2.5 text-sm', // 44px medium
+        sm: 'h-9 px-3.5 text-xs rounded-md', // 36px small
+        md: 'h-11 px-5 py-2.5 text-sm rounded-lg', // 44px medium
+        lg: 'h-12 px-6 text-base rounded-xl', // 48px large
+        icon: 'h-11 w-11 p-0',
+        'icon-sm': 'h-9 w-9 p-0',
       },
     },
     defaultVariants: {

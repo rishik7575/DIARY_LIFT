@@ -11,3 +11,4 @@ export * from './investmentService';
 export * from './productService';
 export * from './orderService';
 export * from './reportService';
+export * from './notificationService';

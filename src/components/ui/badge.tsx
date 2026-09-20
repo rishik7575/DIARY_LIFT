@@ -8,19 +8,29 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-[#166534] text-white shadow-xs',
+          'bg-[#14532D] text-white shadow-xs',
+        forest:
+          'bg-[#F0FDF4] text-[#14532D] border border-[#BBF7D0]',
         gold:
-          'bg-amber-50 text-[#B45309] border border-amber-200 font-bold',
+          'bg-[#FDF9F0] text-[#A67920] border border-[#EEDDB4]',
         secondary:
-          'bg-slate-100 text-slate-700 border border-slate-200',
+          'bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]',
         destructive:
-          'bg-red-50 text-red-700 border border-red-200',
-        outline:
-          'text-slate-800 border border-slate-300',
+          'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]',
+        danger:
+          'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]',
+        warning:
+          'bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]',
+        info:
+          'bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]',
         success:
-          'bg-emerald-50 text-emerald-800 border border-emerald-200',
-        slate:
-          'bg-[#0F172A] text-white',
+          'bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]',
+        outline:
+          'text-[#0F172A] border border-[#CBD5E1] bg-white',
+        navy:
+          'bg-[#0F172A] text-white shadow-xs',
+        simulation:
+          'bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-bold tracking-wider text-[10px] uppercase',
       },
     },
     defaultVariants: {

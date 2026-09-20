@@ -336,69 +336,6 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Executive KPI Metric Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Managed Cattle</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">1,280 Units</span>
-                </div>
-                <p className="text-xs text-forest-700 font-medium mt-1">94% Capacity Utilization</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-700">
-                <Milk className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Daily Certified Milk</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">15,840 L/day</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">Grade-A+ Commercial Ratio: 91%</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Capital Under Co-Ownership</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">₹42.80 Cr</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">2,450 Verified HNI Co-Owners</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
-                <DollarSign className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Yield Reserve Escrow</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-forest-700">145% Coverage</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">₹8.45 Cr Dedicated Liquidity</p>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Master Tabbed Command Interface */}
         <div className="mt-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -436,79 +373,431 @@ export default function AdminPage() {
 
             {/* TAB 1: EXECUTIVE ANALYTICS */}
             <TabsContent value="overview" className="space-y-6">
+              
+              {/* ROW 1: 4 KPI CARDS (Total Farms, Active Cattle, Today's Milk, Open Alerts) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 1. Total Farms */}
+                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Farms</p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-2xl font-bold text-slate-900">{facilities.length || 3} Agro-Parks</span>
+                      </div>
+                      <p className="text-xs text-forest-700 font-medium mt-1">100% Telemetry Online</p>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-700">
+                      <Building2 className="w-6 h-6" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 2. Active Cattle */}
+                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Cattle</p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-2xl font-bold text-slate-900">1,280 Units</span>
+                      </div>
+                      <p className="text-xs text-forest-700 font-medium mt-1">94% Barn Occupancy • RFID Mapped</p>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700">
+                      <Milk className="w-6 h-6" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 3. Today's Milk */}
+                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Milk</p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-2xl font-bold text-slate-900">15,840 Liters</span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">91% Grade-A+ • 4.85% Avg Fat</p>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700">
+                      <TrendingUp className="w-6 h-6" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 4. Open Alerts */}
+                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardContent className="p-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Open Alerts</p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-2xl font-bold text-slate-900">{activeSensorAlerts.length + 2} Pending</span>
+                      </div>
+                      <p className="text-xs text-red-600 font-medium mt-1">1 Critical Environmental • 2 Vet Queue</p>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
+                      <AlertTriangle className="w-6 h-6" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* ROW 2: MILK PRODUCTION TREND & FARM HEALTH OVERVIEW */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* 12-Month Financial Cashflow vs Dividend Distributions */}
+                {/* Milk Production Trend (AreaChart) */}
                 <Card className="border-slate-200 bg-white shadow-sm lg:col-span-2">
-                  <CardHeader className="border-b border-slate-100 pb-4">
-                    <CardTitle className="text-lg font-bold text-slate-900">
-                      12-Month Commercial Cashflow vs Dividend Distributions
-                    </CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
-                      Enterprise revenue from A2 dairy retail & institutional bulk sales against investor 1.5% base payouts.
-                    </CardDescription>
+                  <CardHeader className="border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <Milk className="w-4 h-4 text-forest-700" />
+                        Milk Production & Quality Trend (Last 7 Days)
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
+                        Daily certified milk output in Liters against operational baseline target (15,000 L/day).
+                      </CardDescription>
+                    </div>
+                    <Badge className="bg-forest-50 text-forest-800 border-forest-200 font-mono text-xs">
+                      Baseline: 15,000 L
+                    </Badge>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="h-72 w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={financialTrends} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                        <AreaChart
+                          data={[
+                            { day: 'Mon', actual: 15420, target: 15000, gradeA: 14100 },
+                            { day: 'Tue', actual: 15610, target: 15000, gradeA: 14350 },
+                            { day: 'Wed', actual: 15540, target: 15000, gradeA: 14200 },
+                            { day: 'Thu', actual: 15720, target: 15000, gradeA: 14450 },
+                            { day: 'Fri', actual: 15690, target: 15000, gradeA: 14380 },
+                            { day: 'Sat', actual: 15810, target: 15000, gradeA: 14520 },
+                            { day: 'Sun (Today)', actual: 15840, target: 15000, gradeA: 14610 },
+                          ]}
+                          margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                        >
                           <defs>
-                            <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#166534" stopOpacity={0.4} />
-                              <stop offset="95%" stopColor="#166534" stopOpacity={0} />
+                            <linearGradient id="colorMilkActual" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#14532D" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#14532D" stopOpacity={0} />
                             </linearGradient>
-                            <linearGradient id="colorPayout" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#D97706" stopOpacity={0.4} />
-                              <stop offset="95%" stopColor="#D97706" stopOpacity={0} />
+                            <linearGradient id="colorGradeA" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#C9962B" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#C9962B" stopOpacity={0} />
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                          <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} />
-                          <YAxis stroke="#64748B" fontSize={12} tickLine={false} tickFormatter={(v) => `₹${v / 100000}L`} />
+                          <XAxis dataKey="day" stroke="#64748B" fontSize={12} tickLine={false} />
+                          <YAxis stroke="#64748B" fontSize={12} tickLine={false} domain={[13000, 17000]} tickFormatter={(v) => `${v / 1000}k L`} />
                           <Tooltip
-                            formatter={(v: any) => [`₹${Number(v).toLocaleString('en-IN')}`, 'Amount']}
-                            contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px' }}
+                            formatter={(v: any) => [`${Number(v).toLocaleString('en-IN')} L`, 'Volume']}
+                            contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px', fontSize: '12px' }}
                           />
                           <Legend />
-                          <Area type="monotone" dataKey="dairyRevenueINR" name="Dairy Commerce Revenue" stroke="#166534" fillOpacity={1} fill="url(#colorRev)" />
-                          <Area type="monotone" dataKey="totalDisbursementsINR" name="Investor 1.5% Dividends" stroke="#D97706" fillOpacity={1} fill="url(#colorPayout)" />
+                          <Area type="monotone" dataKey="actual" name="Total Daily Milk (L)" stroke="#14532D" strokeWidth={2} fillOpacity={1} fill="url(#colorMilkActual)" />
+                          <Area type="monotone" dataKey="gradeA" name="Grade-A+ Certified (L)" stroke="#C9962B" strokeWidth={2} fillOpacity={1} fill="url(#colorGradeA)" />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Facility Overview Card */}
+                {/* Farm Health Overview (BarChart/Facility capacity) */}
                 <Card className="border-slate-200 bg-white shadow-sm lg:col-span-1">
                   <CardHeader className="border-b border-slate-100 pb-4">
-                    <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                      <Building2 className="w-5 h-5 text-forest-700" />
-                      Facility Capacity & Sheds
+                    <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-forest-700" />
+                      Facility Health & Capacity
                     </CardTitle>
-                    <CardDescription className="text-xs text-slate-500">
-                      High-tech agro-parks and solar pastures.
+                    <CardDescription className="text-xs text-slate-500 mt-0.5">
+                      Cattle occupancy and renewable microgrid load across agro-parks.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6 space-y-4 text-xs">
-                    {facilities.map((fac) => (
-                      <div key={fac.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold text-slate-900">{fac.name}</span>
-                          <Badge variant="outline" className="border-forest-600 text-forest-700 text-[10px]">
-                            {fac.currentCattleHoused} / {fac.totalCattleCapacity} Units
-                          </Badge>
+                  <CardContent className="p-6">
+                    <div className="h-44 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={[
+                            { name: 'Nashik A', housed: 1280, capacity: 1500 },
+                            { name: 'Pune B', housed: 940, capacity: 1200 },
+                            { name: 'Anand C', housed: 680, capacity: 800 },
+                          ]}
+                          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                          <XAxis dataKey="name" stroke="#64748B" fontSize={11} tickLine={false} />
+                          <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
+                          <Tooltip
+                            formatter={(v: any) => [`${v} Units`, 'Cattle Count']}
+                            contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px', fontSize: '12px' }}
+                          />
+                          <Bar dataKey="housed" name="Housed Units" fill="#14532D" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="capacity" name="Max Capacity" fill="#CBD5E1" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-slate-100 space-y-2 text-xs">
+                      {facilities.map((fac) => (
+                        <div key={fac.id} className="flex justify-between items-center py-1">
+                          <span className="font-semibold text-slate-800">{fac.name.split(' Unit')[0]}</span>
+                          <span className="font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                            {fac.solarCapacityKw}kW Solar • {fac.hydroponicFodderDailyTons}T Fodder
+                          </span>
                         </div>
-                        <p className="text-slate-500 text-[11px]">{fac.location}</p>
-                        <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
-                          <div>Solar: <strong>{fac.solarCapacityKw} kW</strong></div>
-                          <div>Hydroponics: <strong>{fac.hydroponicFodderDailyTons} T/day</strong></div>
-                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* ROW 3: INVESTMENT SUMMARY & E-COMMERCE REVENUE METRICS */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Investment & Yield Reserve Escrow Summary */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <ShieldCheck className="w-5 h-5 text-forest-700" />
+                        Investment & Yield Reserve Escrow Health
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
+                        Capital under co-ownership, escrow coverage ratio, and investor dividend distributions.
+                      </CardDescription>
+                    </div>
+                    <Badge className="bg-forest-100 text-forest-800 border-forest-200 text-xs font-bold">
+                      145% Covered
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <p className="text-[11px] font-semibold text-slate-500 uppercase">Capital Co-Owned</p>
+                        <p className="text-xl font-bold text-slate-900 mt-0.5">₹42.80 Cr</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">2,450 Verified HNI Investors</p>
                       </div>
-                    ))}
+                      <div className="p-3 bg-forest-50/60 rounded-xl border border-forest-200/60">
+                        <p className="text-[11px] font-semibold text-forest-700 uppercase">Reserve Escrow</p>
+                        <p className="text-xl font-bold text-forest-800 mt-0.5">₹8.45 Cr</p>
+                        <p className="text-[11px] text-forest-700 mt-0.5">Liquid Bank Deposit</p>
+                      </div>
+                      <div className="p-3 bg-amber-50/60 rounded-xl border border-amber-200/60 col-span-2 sm:col-span-1">
+                        <p className="text-[11px] font-semibold text-amber-800 uppercase">Monthly Run-Rate</p>
+                        <p className="text-xl font-bold text-amber-900 mt-0.5">1.5% Base</p>
+                        <p className="text-[11px] text-amber-700 mt-0.5">+ Up to 0.5% Milk Bonus</p>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-slate-900">Statutory Yield Reserve Status:</span>
+                        <p className="text-slate-500 text-[11px]">
+                          Maintains 145% coverage of required monthly disbursements (₹8,45,00,000 balance vs ₹5,83,00,000 requirement).
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setActiveTab('plans')}
+                        className="text-xs text-forest-700 border-forest-300 hover:bg-forest-50 shrink-0 ml-4"
+                      >
+                        Inspect Plans
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
 
+                {/* E-Commerce Revenue & Cold-Chain Logistics */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <Package className="w-5 h-5 text-forest-700" />
+                        Dairy Commerce & Cold-Chain Fulfillment
+                      </CardTitle>
+                      <CardDescription className="text-xs text-slate-500 mt-0.5">
+                        Gross merchandise value, rapid doorstep fulfillment, and subscriber retention.
+                      </CardDescription>
+                    </div>
+                    <Badge className="bg-amber-100 text-amber-900 border-amber-200 text-xs font-bold">
+                      ₹68.4L / Mo
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <p className="text-[11px] font-semibold text-slate-500 uppercase">Monthly GMV</p>
+                        <p className="text-xl font-bold text-slate-900 mt-0.5">₹68.40 L</p>
+                        <p className="text-[11px] text-forest-700 font-medium mt-0.5">+18.4% MoM</p>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <p className="text-[11px] font-semibold text-slate-500 uppercase">Subscribers</p>
+                        <p className="text-xl font-bold text-slate-900 mt-0.5">1,480 Families</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Daily A2 Fresh Milk</p>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
+                        <p className="text-[11px] font-semibold text-slate-500 uppercase">Fulfillment SLA</p>
+                        <p className="text-xl font-bold text-forest-700 mt-0.5">99.4%</p>
+                        <p className="text-[11px] text-slate-500 mt-0.5">Sub-15m Delivery</p>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-slate-900">Cold Chain Compliance:</span>
+                        <p className="text-slate-500 text-[11px]">
+                          100% of dispatched milk batches maintained sub-4°C from milking parlour rotary to doorstep drop.
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setActiveTab('orders')}
+                        className="text-xs text-forest-700 border-forest-300 hover:bg-forest-50 shrink-0 ml-4"
+                      >
+                        View Orders
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
+
+              {/* ROW 4: ENVIRONMENTAL ALERTS, OPERATIONAL ISSUES & AUDIT LOG ACTIVITY */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Environmental Alerts Card */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="border-b border-slate-100 pb-3 flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <Thermometer className="w-4 h-4 text-red-600" />
+                      Environmental Sensor Alarms
+                    </CardTitle>
+                    <Badge className="bg-red-100 text-red-800 border-red-200 text-[10px] font-bold">
+                      {activeSensorAlerts.length} Active
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-3 text-xs">
+                    {activeSensorAlerts.map((alert) => (
+                      <div key={alert.id} className="p-3 rounded-lg bg-red-50/70 border border-red-200 space-y-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-red-900">{alert.shedName}</span>
+                          <span className="font-mono text-red-700 font-bold">{alert.currentValue}{alert.unit}</span>
+                        </div>
+                        <p className="text-slate-600 text-[11px]">
+                          Threshold: {alert.thresholdValue}{alert.unit} • Status: {alert.status}
+                        </p>
+                        <p className="text-[10px] text-red-800 font-medium pt-0.5">
+                          Staff Action: {alert.mitigationActionTaken || 'Mitigation pending by field shift operator'}
+                        </p>
+                      </div>
+                    ))}
+                    {activeSensorAlerts.length === 0 && (
+                      <p className="text-slate-500 py-4 text-center">All facility sensors within normal thresholds.</p>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveTab('sensors')}
+                      className="w-full text-xs text-forest-700 hover:bg-forest-50 mt-1"
+                    >
+                      View All Sensors & Thresholds →
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Operational Issues Card */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="border-b border-slate-100 pb-3 flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      Operational Vet Queue
+                    </CardTitle>
+                    <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-[10px] font-bold">
+                      2 Follow-ups
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-3 text-xs">
+                    <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-200 space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-amber-950">Cow DL-C-005 (Nandini)</span>
+                        <Badge className="bg-amber-500 text-white text-[9px] px-1 py-0">Quarantine</Badge>
+                      </div>
+                      <p className="text-slate-600 text-[11px]">
+                        Mild mastitis symptom. Isolated in infirmary with herbal protocol. SCC target: &lt;150k.
+                      </p>
+                      <p className="text-[10px] text-slate-500 pt-0.5">Follow-up: Today, 4:00 PM (Dr. Kulkarni)</p>
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-900">Herd Batch B-04</span>
+                        <Badge variant="outline" className="text-[9px] px-1 py-0">Vaccination</Badge>
+                      </div>
+                      <p className="text-slate-600 text-[11px]">
+                        Bi-annual Foot & Mouth booster schedule confirmed for 180 cattle units.
+                      </p>
+                      <p className="text-[10px] text-slate-500 pt-0.5">Date: Thursday morning session</p>
+                    </div>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setActiveTab('cattle')}
+                      className="w-full text-xs text-forest-700 hover:bg-forest-50 mt-1"
+                    >
+                      View Herd Registry & Vets →
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Audit Log Activity Card */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="border-b border-slate-100 pb-3 flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <History className="w-4 h-4 text-forest-700" />
+                      Governance & Audit Log
+                    </CardTitle>
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      Live Trace
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-2.5 text-xs">
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-2 h-2 rounded-full bg-forest-600 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-900">Plan Draft V2 Created</p>
+                        <p className="text-[11px] text-slate-500">Siddharth Nair drafted "A2 Gir Elite Co-Ownership V2"</p>
+                        <span className="text-[10px] text-slate-400 font-mono">10:45 AM • Master Admin</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-900">Product Price Revision</p>
+                        <p className="text-[11px] text-slate-500">Bilona Ghee 500ml updated to ₹1,450</p>
+                        <span className="text-[10px] text-slate-400 font-mono">09:30 AM • Commerce Ops</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-2 h-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-900">Environmental Threshold Alarm</p>
+                        <p className="text-[11px] text-slate-500">Shed-02 temp exceeded 30.0°C (reading 32.4°C)</p>
+                        <span className="text-[10px] text-slate-400 font-mono">08:15 AM • IoT Sensor Engine</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2.5 items-start">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-900">AM Parlour Milk Certified</p>
+                        <p className="text-[11px] text-slate-500">Batch APPROVED_PREMIUM_COMMERCE (15,840L)</p>
+                        <span className="text-[10px] text-slate-400 font-mono">06:00 AM • Quality Lab</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
             </TabsContent>
 
             {/* TAB 2: ENVIRONMENTAL SENSOR OPS */}
