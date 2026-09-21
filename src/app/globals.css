@@ -22,6 +22,33 @@
   --color-accent-50: #FFFBEB;
   --color-accent-100: #FDE68A;
 
+  /* Forest tokens for compatibility with legacy and enterprise styles */
+  --color-forest-950: #022C22;
+  --color-forest-900: #064E3B;
+  --color-forest-800: #065F46;
+  --color-forest-700: #047857;
+  --color-forest-600: #059669;
+  --color-forest-500: #10B981;
+  --color-forest-400: #34D399;
+  --color-forest-300: #6EE7B7;
+  --color-forest-200: #A7F3D0;
+  --color-forest-100: #D1FAE5;
+  --color-forest-50:  #ECFDF5;
+  --color-forest-25:  #F6FEF9;
+
+  /* Gold tokens */
+  --color-gold-900: #78350F;
+  --color-gold-800: #92400E;
+  --color-gold-700: #B45309;
+  --color-gold-600: #D97706;
+  --color-gold-500: #F59E0B;
+  --color-gold-400: #FBBF24;
+  --color-gold-300: #FCD34D;
+  --color-gold-200: #FDE68A;
+  --color-gold-100: #FEF3C7;
+  --color-gold-50:  #FFFBEB;
+  --color-gold-25:  #FFFDF0;
+
   --color-ink: #0F172A;
   --color-ink-900: #0F172A;
   --color-ink-800: #1E293B;
@@ -91,6 +118,44 @@
   --p-danger-bg:   #FEF2F2;
   --p-info:        #3B82F6;
   --p-info-bg:     #EFF6FF;
+
+  /* Aliases for forest, gold, and ink */
+  --p-forest-950: #022C22;
+  --p-forest-900: #064E3B;
+  --p-forest-800: #065F46;
+  --p-forest-700: #047857;
+  --p-forest-600: #059669;
+  --p-forest-500: #10B981;
+  --p-forest-400: #34D399;
+  --p-forest-300: #6EE7B7;
+  --p-forest-200: #A7F3D0;
+  --p-forest-100: #D1FAE5;
+  --p-forest-50:  #ECFDF5;
+  --p-forest-25:  #F6FEF9;
+
+  --p-gold-900: #78350F;
+  --p-gold-800: #92400E;
+  --p-gold-700: #B45309;
+  --p-gold-600: #D97706;
+  --p-gold-500: #F59E0B;
+  --p-gold-400: #FBBF24;
+  --p-gold-300: #FCD34D;
+  --p-gold-200: #FDE68A;
+  --p-gold-100: #FEF3C7;
+  --p-gold-50:  #FFFBEB;
+  --p-gold-25:  #FFFDF0;
+
+  --p-ink-950: #020617;
+  --p-ink-900: #0F172A;
+  --p-ink-800: #1E293B;
+  --p-ink-700: #334155;
+  --p-ink-600: #475569;
+  --p-ink-500: #64748B;
+  --p-ink-400: #94A3B8;
+  --p-ink-300: #CBD5E1;
+  --p-ink-200: #E2E8F0;
+  --p-ink-100: #F1F5F9;
+  --p-ink-50:  #F8FAFC;
 }
 
 /* ============================================================

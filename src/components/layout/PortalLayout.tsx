@@ -27,7 +27,6 @@ import {
   FileText,
   Users,
   Settings,
-  Home,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -178,7 +177,6 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
 
 export default function PortalLayout({
   children,
-  allowedRoles,
 }: {
   children: React.ReactNode;
   allowedRoles?: UserRole[];
@@ -189,8 +187,17 @@ export default function PortalLayout({
   const router    = useRouter();
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifOpen,   setNotifOpen]   = useState(false);
+
+  // Close mobile drawer on route change without setState in effect
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    if (mobileOpen) {
+      setMobileOpen(false);
+    }
+  }
 
   useEffect(() => {
     let mounted = true;
@@ -204,9 +211,6 @@ export default function PortalLayout({
     const interval = setInterval(load, 15_000);
     return () => { mounted = false; clearInterval(interval); };
   }, []);
-
-  // Close mobile drawer on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const handlePortalSwitch = (role: UserRole, path: string) => {
     switchRole(role);
@@ -222,8 +226,8 @@ export default function PortalLayout({
     items: group.items.filter((item) => !item.roles || item.roles.includes(currentRole)),
   })).filter((g) => g.items.length > 0);
 
-  /* ── Sidebar content (shared between desktop and mobile drawer) ── */
-  const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
+  /* ── Sidebar content renderer (shared between desktop and mobile drawer) ── */
+  const renderSidebarContent = (onClose?: () => void) => (
     <>
       {/* Brand */}
       <div
@@ -405,7 +409,7 @@ export default function PortalLayout({
           className="dl-sidebar hidden lg:flex flex-col"
           aria-label="Main navigation"
         >
-          <SidebarContent />
+          {renderSidebarContent()}
         </aside>
 
         {/* ── MAIN AREA ── */}
@@ -501,7 +505,7 @@ export default function PortalLayout({
               animation: 'dl-slide-in-right var(--duration-normal) var(--ease-out)',
             }}
           >
-            <SidebarContent onClose={() => setMobileOpen(false)} />
+            {renderSidebarContent(() => setMobileOpen(false))}
           </aside>
         </div>
       )}

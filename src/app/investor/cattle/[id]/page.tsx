@@ -12,13 +12,8 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { use } from 'react';
 import {
   ArrowLeft,
-  Calendar,
-  ShieldCheck,
   Milk,
   Activity,
-  Thermometer,
-  Layers,
-  Heart,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -110,13 +105,13 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
               <div>
                 <div className="flex items-center gap-3">
                   <h1 className="text-2xl md:text-3xl font-bold font-serif">{cattle.name}</h1>
-                  <Badge className="bg-forest-600 text-white font-mono text-xs">{cattle.rfidTag}</Badge>
+                  <Badge className="bg-emerald-600 text-white font-mono text-xs">{cattle.rfidTag}</Badge>
                 </div>
                 <p className="text-xs md:text-sm text-slate-300 mt-1">
                   {cattle.breed.replace(/_/g, ' ')} • DOB: {formatDate(cattle.dateOfBirth)} • Lactation #{cattle.lactation?.lactationNumber || 1}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-forest-100 text-forest-800 border-forest-200 capitalize text-xs">
+                  <Badge variant="forest" className="capitalize text-xs">
                     ● {cattle.biologicalStatus}
                   </Badge>
                   <span className="text-xs text-slate-400">
@@ -131,7 +126,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
               <div className="text-2xl font-bold font-mono text-white mt-1">
                 {formatCurrency(cattle.currentValuationINR || cattle.costBasisINR)}
               </div>
-              <Badge variant="outline" className="border-forest-500/40 text-forest-400 bg-forest-950/40 text-[11px] mt-1.5">
+              <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-950/40 text-[11px] mt-1.5">
                 100% Mortality Insured
               </Badge>
             </div>
@@ -145,7 +140,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
           <Card className="border-slate-200 bg-white shadow-sm lg:col-span-2">
             <CardHeader className="border-b border-slate-100 pb-4">
               <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Milk className="w-5 h-5 text-forest-700" />
+                <Milk className="w-5 h-5 text-emerald-700" />
                 14-Day Parlour Milk Yield Trend
               </CardTitle>
               <CardDescription className="text-xs text-slate-500">
@@ -166,9 +161,9 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
                     <Line
                       type="monotone"
                       dataKey="yield"
-                      stroke="#166534"
+                      stroke="#059669"
                       strokeWidth={2.5}
-                      dot={{ r: 4, fill: '#166534' }}
+                      dot={{ r: 4, fill: '#059669' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -180,7 +175,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
           <Card className="border-slate-200 bg-white shadow-sm lg:col-span-1">
             <CardHeader className="border-b border-slate-100 pb-4">
               <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Activity className="w-5 h-5 text-forest-700" />
+                <Activity className="w-5 h-5 text-emerald-700" />
                 Live Smart-Collar Telemetry
               </CardTitle>
               <CardDescription className="text-xs text-slate-500">
@@ -195,7 +190,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
                     {cattle.telemetry?.coreTemperatureCelsius || 38.6}°C
                   </div>
                 </div>
-                <Badge className="bg-forest-100 text-forest-800 border-forest-200">Optimal (38.5-39.2)</Badge>
+                <Badge variant="forest">Optimal (38.5-39.2)</Badge>
               </div>
 
               <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
@@ -205,7 +200,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
                     {cattle.telemetry?.ruminationMinutesPerDay || 490} min
                   </div>
                 </div>
-                <Badge className="bg-forest-100 text-forest-800 border-forest-200">Active Digestion</Badge>
+                <Badge variant="forest">Active Digestion</Badge>
               </div>
 
               <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
@@ -215,7 +210,7 @@ export default function CattleProfilePage({ params }: { params: Promise<{ id: st
                     {cattle.telemetry?.activityIndex || 78}% Grazing
                   </div>
                 </div>
-                <Badge className="bg-forest-100 text-forest-800 border-forest-200">Healthy Paddock</Badge>
+                <Badge variant="forest">Healthy Paddock</Badge>
               </div>
 
               <div className="text-xs text-slate-500 space-y-1.5 pt-2 border-t border-slate-100">

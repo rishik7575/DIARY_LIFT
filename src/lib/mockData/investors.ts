@@ -290,7 +290,7 @@ export const INVESTOR_PROFILES: InvestorProfile[] = [
   },
 ];
 
-export const INVESTORS: any[] = INVESTOR_PROFILES.map((p) => ({
+export const INVESTORS: Record<string, unknown>[] = INVESTOR_PROFILES.map((p) => ({
   ...p,
   name: p.fullName,
   totalInvested: p.portfolio.totalInvestedINR,
@@ -308,8 +308,8 @@ export const INVESTORS: any[] = INVESTOR_PROFILES.map((p) => ({
 }));
 
 // Legacy interface aliases for backward compatibility during phased UI rewrite
-export type Investor = any;
-export type MonthlyYield = any;
+export type Investor = Record<string, unknown>;
+export type MonthlyYield = Record<string, unknown>;
 
 export const INVESTMENT_PACKAGES = [
   {

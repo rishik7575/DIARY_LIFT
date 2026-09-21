@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useId, useEffect, useState } from 'react';
+import React, { useId, useEffect, useSyncExternalStore } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SparklesProps {
@@ -24,11 +24,11 @@ export const SparklesCore: React.FC<SparklesProps> = ({
 }) => {
   const generatedId = useId();
   const canvasId = id || generatedId;
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     if (!mounted) return;

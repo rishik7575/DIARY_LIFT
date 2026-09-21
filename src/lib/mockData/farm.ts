@@ -3,7 +3,13 @@
  * Relational Entity adhering to DailyMilkLogRecord and VeterinaryAlertFlag
  */
 
-import { DailyMilkLogRecord, VeterinaryAlertFlag, FarmFacilityMetrics } from '../types/farm';
+import {
+  DailyMilkLogRecord,
+  VeterinaryAlertFlag,
+  FarmFacilityMetrics,
+  VaccinationScheduleItem,
+  CalfBirthRecord,
+} from '../types/farm';
 
 export const FARM_FACILITY_OVERVIEW: FarmFacilityMetrics = {
   facilityId: 'FAC-NSK-01',
@@ -285,13 +291,12 @@ export const VETERINARY_ALERTS: VeterinaryAlertFlag[] = [
   },
 ];
 
-export const FARM_ALERTS = VETERINARY_ALERTS as any;
-export const VACCINATION_SCHEDULE: any[] = [];
-export const CALF_BIRTH_RECORDS: any[] = [];
+export const FARM_ALERTS = VETERINARY_ALERTS;
+export const VACCINATION_SCHEDULE: VaccinationScheduleItem[] = [];
+export const CALF_BIRTH_RECORDS: CalfBirthRecord[] = [];
 
 // Legacy interface aliases for backward compatibility during phased UI rewrite
-export type FarmAlert = any;
-export type DailyMilkLog = any;
-export type VaccinationSchedule = any;
-export type CalfBirthRecord = any;
+export type FarmAlert = Record<string, unknown>;
+export type DailyMilkLog = Record<string, unknown>;
+export type VaccinationSchedule = Record<string, unknown>;
 

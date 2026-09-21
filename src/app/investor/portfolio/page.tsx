@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import PortalGuard from '@/components/layout/PortalGuard';
 import PortalLayout from '@/components/layout/PortalLayout';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { investmentService, cattleService } from '@/lib/services';
 import { InvestorProfile } from '@/lib/types/investor';
 import { CattleAsset } from '@/lib/types/cattle';
@@ -17,8 +16,6 @@ import {
   Activity,
   ShieldCheck,
   TrendingUp,
-  Thermometer,
-  Layers,
   ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -152,7 +149,7 @@ export default function PortfolioPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-xl font-bold font-serif">{c.name}</h3>
-                    <Badge className="bg-forest-600 text-white font-mono text-xs">{c.rfidTag}</Badge>
+                    <Badge className="bg-emerald-600 text-white font-mono text-xs">{c.rfidTag}</Badge>
                   </div>
                   <p className="text-xs text-slate-300 mt-1">
                     {c.breed.replace(/_/g, ' ')} • {c.farmAllocation?.facilityId || 'FAC-01'} ({c.farmAllocation?.shedNumber || 'Shed 1'}) • Lactation #{c.lactation?.lactationNumber || 1}

@@ -6,7 +6,7 @@ import { useCartStore } from '@/lib/store/cartStore';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Milk, ShoppingCart, TrendingUp, LogOut, Bell, User,
+  Milk, ShoppingCart, TrendingUp, LogOut, Bell,
   BarChart3, Clipboard, ChevronDown, Star
 } from 'lucide-react';
 import { useState } from 'react';
@@ -14,14 +14,14 @@ import { useState } from 'react';
 const PORTAL_CONFIGS = {
   consumer: {
     label: 'Consumer Store',
-    color: 'forest',
+    color: 'emerald',
     bg: 'bg-white',
-    textPrimary: 'text-slate-850',
-    textSecondary: 'text-slate-850/60',
+    textPrimary: 'text-slate-900',
+    textSecondary: 'text-slate-600',
     border: 'border-slate-100',
-    accent: 'text-forest-600',
-    accentBg: 'bg-forest-50',
-    accentHover: 'hover:bg-forest-50',
+    accent: 'text-emerald-700',
+    accentBg: 'bg-emerald-50',
+    accentHover: 'hover:bg-emerald-50',
     links: [
       { href: '/consumer', label: 'Shop' },
       { href: '/consumer/invest', label: '✨ Invest in Cattle' },
@@ -29,12 +29,12 @@ const PORTAL_CONFIGS = {
   },
   investor: {
     label: 'Investor Portal',
-    color: 'gold',
+    color: 'amber',
     bg: 'bg-white',
-    textPrimary: 'text-slate-850',
-    textSecondary: 'text-slate-850/60',
+    textPrimary: 'text-slate-900',
+    textSecondary: 'text-slate-600',
     border: 'border-slate-100',
-    accent: 'text-gold-400',
+    accent: 'text-amber-700',
     accentBg: 'bg-amber-50',
     accentHover: 'hover:bg-amber-50',
     links: [
@@ -100,12 +100,12 @@ export default function PortalNavbar() {
           {/* Logo + Portal Label */}
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-forest-500 to-forest-300 flex items-center justify-center shadow-forest">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-400 flex items-center justify-center shadow-sm">
                 <Milk className="w-4.5 h-4.5 text-white" style={{ width: '18px', height: '18px' }} />
               </div>
               <div className="hidden sm:block">
-                <span className={`font-display text-lg font-bold text-forest-600`}>Dairy</span>
-                <span className={`font-display text-lg font-bold text-gold-400`}>-Lift</span>
+                <span className="font-display text-lg font-bold text-emerald-700">Dairy</span>
+                <span className="font-display text-lg font-bold text-amber-600">-Lift</span>
               </div>
             </Link>
             <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${config.accentBg}`}>
@@ -157,7 +157,7 @@ export default function PortalNavbar() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-forest-500 text-white text-xs font-bold rounded-full flex items-center justify-center"
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-600 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-xs"
                     >
                       {totalItems > 9 ? '9+' : totalItems}
                     </motion.span>
@@ -178,7 +178,7 @@ export default function PortalNavbar() {
                 onClick={() => setShowDropdown(!showDropdown)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl ${config.accentHover} transition-colors`}
               >
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-forest-500 to-forest-300 flex items-center justify-center text-white text-sm font-bold`}>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-400 flex items-center justify-center text-white text-sm font-bold shadow-xs">
                   {user.avatar}
                 </div>
                 <span className={`hidden md:block text-sm font-medium ${config.textPrimary}`}>

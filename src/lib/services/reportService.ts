@@ -37,7 +37,7 @@ export const reportService = {
   /**
    * Investor 1.5% base vs performance bonus yield distribution history
    */
-  async getInvestorYieldHistory(investorId: string) {
+  async getInvestorYieldHistory() {
     await new Promise((res) => setTimeout(res, 30));
     return [
       { month: 'May 2026', baseYieldINR: 3750, performanceBonusINR: 920, totalEarnedINR: 4670, effectiveYieldPercent: 1.87 },

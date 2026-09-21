@@ -16,7 +16,9 @@ import {
   cattleService,
   InvestmentPlanConfig,
 } from '@/lib/services';
-import { InvestorProfile, DividendLedgerEntry, YieldReserveHealth } from '@/lib/types/investor';
+import {
+  InvestorProfile,
+} from '@/lib/types/investor';
 import { CattleAsset } from '@/lib/types/cattle';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -26,22 +28,15 @@ import {
   Milk,
   ShieldCheck,
   Calendar,
-  Layers,
   ArrowUpRight,
   Activity,
   CheckCircle2,
   FileText,
-  AlertCircle,
-  HelpCircle,
   Download,
   Info,
   Sliders,
-  ExternalLink,
-  ChevronRight,
 } from 'lucide-react';
 import {
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -58,7 +53,6 @@ export default function InvestorDashboard() {
   const [profile, setProfile] = useState<InvestorProfile | null>(null);
   const [assignedCattle, setAssignedCattle] = useState<CattleAsset[]>([]);
   const [plans, setPlans] = useState<InvestmentPlanConfig[]>([]);
-  const [reserveHealth, setReserveHealth] = useState<YieldReserveHealth | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Calculator State
@@ -78,11 +72,10 @@ export default function InvestorDashboard() {
   useEffect(() => {
     async function loadInvestorData() {
       try {
-        const [portfolioData, allCattle, allPlans, reserve] = await Promise.all([
+        const [portfolioData, allCattle, allPlans] = await Promise.all([
           investmentService.getPortfolio(user?.investorId || user?.email || 'INV-DL-1001'),
           cattleService.getAll(),
           investmentService.getPlans(),
-          investmentService.getYieldReserveHealth(),
         ]);
 
         if (portfolioData) {
@@ -93,7 +86,6 @@ export default function InvestorDashboard() {
           setAssignedCattle(userCattle);
         }
         setPlans(allPlans);
-        setReserveHealth(reserve);
       } catch (err) {
         console.error('Failed to load investor data:', err);
       } finally {
@@ -124,8 +116,9 @@ export default function InvestorDashboard() {
         setAppFeedback(null);
         setAppModalOpen(false);
       }, 4000);
-    } catch (err: any) {
-      alert(err.message || 'Error submitting application');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error submitting application';
+      alert(msg);
     }
   };
 
@@ -297,9 +290,9 @@ export default function InvestorDashboard() {
                           <XAxis dataKey="period" stroke="#64748B" fontSize={12} tickLine={false} />
                           <YAxis stroke="#64748B" fontSize={12} tickLine={false} tickFormatter={(v) => `₹${v}`} />
                           <Tooltip
-                            formatter={(value: any, name: any) => [
-                              `₹${Number(value).toLocaleString('en-IN')}`,
-                              name === 'basePayout' ? '1.5% Base Payout' : 'Milk Performance Bonus',
+                            formatter={(value: unknown, name: unknown) => [
+                              `₹${Number(value || 0).toLocaleString('en-IN')}`,
+                              String(name) === 'basePayout' ? '1.5% Base Payout' : 'Milk Performance Bonus',
                             ]}
                             contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px' }}
                           />
@@ -328,10 +321,10 @@ export default function InvestorDashboard() {
                   <CardContent className="p-6 space-y-4">
                     <div className="bg-forest-50 p-4 rounded-xl border border-forest-100">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-forest-800 uppercase tracking-wider">
+                        <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                           Reserve Coverage Ratio
                         </span>
-                        <Badge className="bg-forest-700 text-white font-mono">145% Optimal</Badge>
+                        <Badge className="bg-emerald-700 text-white font-mono shadow-xs">145% Optimal</Badge>
                       </div>
                       <div className="text-2xl font-bold text-forest-900 font-mono mt-2">₹8,45,00,000</div>
                       <p className="text-xs text-forest-700 mt-1">
@@ -644,8 +637,8 @@ export default function InvestorDashboard() {
 
                     <div className="p-5 pt-0">
                       <Button
-                        variant="forest"
-                        className="w-full bg-forest-700 hover:bg-forest-800 text-white"
+                        variant="primary"
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                         onClick={() => {
                           setSelectedPlanForApp(plan);
                           setAppForm((prev) => ({ ...prev, amount: plan.minimumContributionINR }));
@@ -746,10 +739,10 @@ export default function InvestorDashboard() {
                   </Button>
                   <Button
                     type="submit"
-                    variant="forest"
+                    variant="primary"
                     size="sm"
                     disabled={!appForm.agreed}
-                    className="bg-forest-700 hover:bg-forest-800 text-white"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                   >
                     Submit Allocation Draft
                   </Button>

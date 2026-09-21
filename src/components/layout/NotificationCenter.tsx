@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { notificationService, AppNotification, NotificationSource } from '@/lib/services/notificationService';
 import { formatDate } from '@/lib/utils';
 import {
   Bell,
-  CheckCircle2,
-  AlertTriangle,
   Info,
   Thermometer,
   Activity,
@@ -17,7 +15,6 @@ import {
   Package,
   CheckCheck,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -32,15 +29,18 @@ export default function NotificationCenter({ open, onOpenChange, onUpdateBadge }
   const [sourceFilter, setSourceFilter] = useState<string>('ALL');
 
   useEffect(() => {
+    let isSubscribed = true;
     if (open) {
-      loadNotifications();
+      void notificationService.getNotifications().then((list) => {
+        if (isSubscribed) {
+          setNotifications(list);
+        }
+      });
     }
+    return () => {
+      isSubscribed = false;
+    };
   }, [open]);
-
-  const loadNotifications = async () => {
-    const list = await notificationService.getNotifications();
-    setNotifications(list);
-  };
 
   const handleMarkAsRead = async (id: string) => {
     await notificationService.markAsRead(id);

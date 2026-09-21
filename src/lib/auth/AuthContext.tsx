@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 export type UserRole = 'consumer' | 'investor' | 'staff' | 'admin';
@@ -122,27 +122,27 @@ const ROLE_REDIRECT: Record<UserRole, string> = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    // Load user from sessionStorage for persistence across navigation
-    const stored = sessionStorage.getItem('dairylift_user');
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        sessionStorage.removeItem('dairylift_user');
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('dairylift_user') || sessionStorage.getItem('dairylift_user');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          localStorage.removeItem('dairylift_user');
+          sessionStorage.removeItem('dairylift_user');
+        }
       }
     }
-    setIsLoading(false);
-  }, []);
+    return null;
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 800));
+    // Simulate brief network delay
+    await new Promise((r) => setTimeout(r, 600));
 
     const account = MOCK_ACCOUNTS[email.toLowerCase()];
     if (!account) {
@@ -155,7 +155,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(account.user);
-    sessionStorage.setItem('dairylift_user', JSON.stringify(account.user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dairylift_user', JSON.stringify(account.user));
+      sessionStorage.setItem('dairylift_user', JSON.stringify(account.user));
+    }
     setIsLoading(false);
     router.push(ROLE_REDIRECT[account.user.role]);
     return { success: true };
@@ -163,7 +166,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    sessionStorage.removeItem('dairylift_user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('dairylift_user');
+      sessionStorage.removeItem('dairylift_user');
+    }
     router.push('/auth');
   };
 
@@ -175,7 +181,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       investorId,
     };
     setUser(upgraded);
-    sessionStorage.setItem('dairylift_user', JSON.stringify(upgraded));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dairylift_user', JSON.stringify(upgraded));
+      sessionStorage.setItem('dairylift_user', JSON.stringify(upgraded));
+    }
   };
 
   const switchRole = (role: UserRole) => {
@@ -183,7 +192,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const targetUser = mockEntry ? mockEntry.user : user ? { ...user, role } : null;
     if (targetUser) {
       setUser(targetUser);
-      sessionStorage.setItem('dairylift_user', JSON.stringify(targetUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('dairylift_user', JSON.stringify(targetUser));
+        sessionStorage.setItem('dairylift_user', JSON.stringify(targetUser));
+      }
       router.push(ROLE_REDIRECT[role]);
     }
   };

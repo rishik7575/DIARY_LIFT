@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import PortalLayout from '@/components/layout/PortalLayout';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, FileText, AlertTriangle, Scale, Lock, RefreshCw, Truck } from 'lucide-react';
+import { AlertTriangle, Scale, Lock, RefreshCw, Truck } from 'lucide-react';
 
 const LEGAL_SECTIONS = [
   {

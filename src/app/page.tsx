@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
-  Milk, ShieldCheck, TrendingUp, Activity, Layers,
-  Thermometer, Award, ChevronRight, CheckCircle2,
+  Milk, ShieldCheck, TrendingUp, Activity,
+  Thermometer, ChevronRight, CheckCircle2,
   ShoppingCart, ClipboardList, ShieldAlert, Leaf,
-  Sun, Zap, ArrowUpRight, Star, Menu, X, Calculator,
+  Sun, Zap, Star, Menu, X, Calculator,
 } from 'lucide-react';
 
 /* ── Scroll-triggered section reveal ── */

@@ -7,7 +7,7 @@ import { PRODUCTS as INITIAL_PRODUCTS, CATEGORIES, Product } from '../mockData/p
 
 export { type Product };
 
-let productsStore: Product[] = [...INITIAL_PRODUCTS];
+const productsStore: Product[] = [...INITIAL_PRODUCTS];
 
 export const productService = {
   /**

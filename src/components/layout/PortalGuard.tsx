@@ -37,7 +37,7 @@ export default function PortalGuard({ children, allowedRoles }: PortalGuardProps
     return (
       <div className="min-h-screen bg-dairy-white flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-10 h-10 text-forest-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mx-auto mb-4" />
           <p className="text-slate-850/50 text-sm">Loading your portal...</p>
         </div>
       </div>

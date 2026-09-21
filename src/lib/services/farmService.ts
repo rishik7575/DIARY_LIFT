@@ -74,7 +74,7 @@ export const FACILITIES: FarmFacility[] = [
 ];
 
 // Initial thresholds store
-let facilityThresholdsStore: Record<string, FarmFacilityThresholdConfig> = {
+const facilityThresholdsStore: Record<string, FarmFacilityThresholdConfig> = {
   'FAC-NSK-01': {
     facilityId: 'FAC-NSK-01',
     facilityName: 'Nashik High-Tech Agro-Park Unit A',

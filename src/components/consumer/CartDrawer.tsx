@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/lib/store/cartStore';
-import { X, Minus, Plus, ShoppingBag, Trash2, Zap, CheckCircle2, ArrowRight, ShieldCheck, MapPin, Clock } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, Zap, ArrowRight, ShieldCheck, MapPin, Clock } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { orderService, CheckoutInput } from '@/lib/services';
 import { DeliverySlotTime, OrderFulfillment } from '@/lib/types/order';
@@ -62,8 +62,9 @@ export default function CartDrawer() {
       setConfirmedOrder(created);
       clearCart();
       setStep('confirmed');
-    } catch (err: any) {
-      alert(err.message || 'Failed to place order');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to place order';
+      alert(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -122,16 +123,16 @@ export default function CartDrawer() {
             {step === 'cart' && (
               <>
                 {/* Free delivery banner */}
-                <div className="px-5 py-2.5 bg-forest-50 border-b border-forest-100 flex items-center justify-between text-xs">
+                <div className="px-5 py-2.5 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-forest-700 shrink-0" />
-                    <span className="text-forest-800 font-medium">
+                    <Zap className="w-4 h-4 text-emerald-700 shrink-0" />
+                    <span className="text-emerald-800 font-medium">
                       {pricing.isFreeDelivery
                         ? '🎉 Free Farm Delivery unlocked!'
                         : `Add ${formatCurrency(pricing.amountNeededForFreeDelivery)} more for Free Delivery`}
                     </span>
                   </div>
-                  <span className="font-mono text-forest-700 font-bold">Min ₹499</span>
+                  <span className="font-mono text-emerald-700 font-bold">Min ₹499</span>
                 </div>
 
                 {/* Items List */}
@@ -155,7 +156,7 @@ export default function CartDrawer() {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-xs text-slate-900 truncate">{product.name}</h4>
                           <p className="text-[11px] text-slate-500">{product.unit} • {formatCurrency(product.price)} each</p>
-                          <p className="font-bold text-xs text-forest-700 mt-1">
+                          <p className="font-bold text-xs text-emerald-700 mt-1">
                             {formatCurrency(product.price * quantity)}
                           </p>
                         </div>
@@ -199,7 +200,7 @@ export default function CartDrawer() {
                         <span>EV Fleet Delivery Fee</span>
                         <span className="font-mono">
                           {pricing.deliveryFee === 0 ? (
-                            <strong className="text-forest-700">FREE</strong>
+                            <strong className="text-emerald-700">FREE</strong>
                           ) : (
                             formatCurrency(pricing.deliveryFee)
                           )}
@@ -211,14 +212,14 @@ export default function CartDrawer() {
                       </div>
                       <div className="flex justify-between pt-2 border-t border-slate-200 text-sm font-bold text-slate-900">
                         <span>Grand Total</span>
-                        <span className="font-mono text-forest-700">{formatCurrency(pricing.grandTotal)}</span>
+                        <span className="font-mono text-emerald-700">{formatCurrency(pricing.grandTotal)}</span>
                       </div>
                     </div>
 
                     <Button
                       onClick={handleProceedToCheckout}
-                      variant="forest"
-                      className="w-full bg-forest-700 hover:bg-forest-800 text-white font-medium py-3 flex items-center justify-center gap-2"
+                      variant="primary"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 flex items-center justify-center gap-2 shadow-sm"
                     >
                       Proceed to Fulfillment <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -235,7 +236,7 @@ export default function CartDrawer() {
                   {/* Delivery Slot Selection */}
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-slate-700 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-forest-700" />
+                      <Clock className="w-3.5 h-3.5 text-emerald-700" />
                       Select Delivery Slot
                     </Label>
                     <div className="grid grid-cols-1 gap-2 text-xs">
@@ -247,15 +248,15 @@ export default function CartDrawer() {
                         <div
                           key={slot.id}
                           onClick={() => setDeliverySlot(slot.id)}
-                          className={`p-3 rounded-lg border cursor-pointer flex items-center justify-between ${
+                          className={`p-3 rounded-lg border cursor-pointer flex items-center justify-between transition-all ${
                             deliverySlot === slot.id
-                              ? 'border-forest-600 bg-forest-50/50 text-forest-900 font-medium'
-                              : 'border-slate-200 bg-white text-slate-700'
+                              ? 'border-emerald-600 bg-emerald-50/70 text-emerald-950 font-medium ring-1 ring-emerald-500/20'
+                              : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                           }`}
                         >
                           <span>{slot.label}</span>
                           {slot.tag && (
-                            <span className="text-[10px] bg-forest-700 text-white px-2 py-0.5 rounded font-bold">
+                            <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">
                               {slot.tag}
                             </span>
                           )}
@@ -334,7 +335,7 @@ export default function CartDrawer() {
                 <div className="p-5 border-t border-slate-200 bg-slate-50 space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-slate-600">Total Payable (Incl. Taxes)</span>
-                    <span className="text-base font-bold font-mono text-forest-700">
+                    <span className="text-base font-bold font-mono text-emerald-700">
                       {formatCurrency(pricing.grandTotal)}
                     </span>
                   </div>
@@ -351,9 +352,9 @@ export default function CartDrawer() {
                     </Button>
                     <Button
                       type="submit"
-                      variant="forest"
+                      variant="primary"
                       disabled={isSubmitting}
-                      className="flex-1 bg-forest-700 hover:bg-forest-800 text-white font-medium"
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                     >
                       {isSubmitting ? 'Confirming Dispatch...' : 'Confirm Order (COD / UPI)'}
                     </Button>
@@ -366,7 +367,7 @@ export default function CartDrawer() {
             {step === 'confirmed' && confirmedOrder && (
               <div className="flex-1 flex flex-col justify-between p-6 text-center">
                 <div className="my-auto space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-forest-100 text-forest-700 flex items-center justify-center mx-auto text-3xl">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto text-3xl font-bold">
                     ✓
                   </div>
                   <h3 className="text-xl font-bold font-serif text-slate-900">Order Dispatched to Farm!</h3>
@@ -381,7 +382,7 @@ export default function CartDrawer() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Tracking:</span>
-                      <strong className="text-forest-700">{confirmedOrder.trackingNumber}</strong>
+                      <strong className="text-emerald-700">{confirmedOrder.trackingNumber}</strong>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Slot:</span>
@@ -400,8 +401,8 @@ export default function CartDrawer() {
 
                 <Button
                   onClick={handleClose}
-                  variant="forest"
-                  className="w-full bg-forest-700 hover:bg-forest-800 text-white font-medium"
+                  variant="primary"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 shadow-sm"
                 >
                   Done & Continue Browsing
                 </Button>

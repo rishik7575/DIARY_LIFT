@@ -8,7 +8,7 @@ import ProductCard from '@/components/consumer/ProductCard';
 import { productService, Product } from '@/lib/services';
 import { CATEGORIES } from '@/lib/mockData/products';
 import { useCartStore } from '@/lib/store/cartStore';
-import { Search, TrendingUp, ShoppingCart, Zap, ShieldCheck, Filter, ChevronRight, Award } from 'lucide-react';
+import { Search, ShoppingCart, Zap, ShieldCheck, ChevronRight, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -175,7 +175,7 @@ export default function ConsumerPage() {
 
           {filteredProducts.length === 0 && (
             <div className="py-16 text-center text-slate-500 bg-white rounded-2xl border border-slate-200">
-              <p className="text-base font-semibold">No products found matching "{searchQuery}"</p>
+              <p className="text-base font-semibold">No products found matching &quot;{searchQuery}&quot;</p>
               <p className="text-xs text-slate-400 mt-1">Try clearing your search query or selecting another category.</p>
             </div>
           )}

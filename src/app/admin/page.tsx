@@ -16,7 +16,6 @@ import {
   farmService,
   investmentService,
   orderService,
-  reportService,
   productService,
   FarmFacility,
   InvestmentPlanConfig,
@@ -25,7 +24,7 @@ import { CattleAsset, BiologicalStatus } from '@/lib/types/cattle';
 import { EnvironmentalSensorAlert, FarmFacilityThresholdConfig } from '@/lib/types/farm';
 import { OrderFulfillment, OrderStatus } from '@/lib/types/order';
 import { Product } from '@/lib/mockData/products';
-import { formatCurrency, formatNumber, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import {
   Milk,
   TrendingUp,
@@ -33,23 +32,14 @@ import {
   Search,
   CheckCircle2,
   AlertTriangle,
-  Users,
-  DollarSign,
   Building2,
   Package,
-  Layers,
-  Clock,
   ArrowUpRight,
-  Filter,
-  Check,
-  Eye,
   Thermometer,
   Sliders,
-  FileText,
   History,
   Tag,
   PlusCircle,
-  RefreshCw,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -73,7 +63,6 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [sensorAlerts, setSensorAlerts] = useState<EnvironmentalSensorAlert[]>([]);
   const [thresholdConfig, setThresholdConfig] = useState<FarmFacilityThresholdConfig | null>(null);
-  const [financialTrends, setFinancialTrends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Feedback notifications
@@ -110,35 +99,37 @@ export default function AdminPage() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
   const [tempPrice, setTempPrice] = useState<number>(0);
 
-  const loadAllData = async () => {
-    try {
-      const [c, f, p, o, r, prods, alerts, thresh] = await Promise.all([
-        cattleService.getAll(),
-        farmService.getFacilities(),
-        investmentService.getPlans({ includeUnpublished: true }),
-        orderService.getAllOrders(),
-        reportService.getExecutiveFinancialTrends(),
-        productService.getProducts(),
-        farmService.getOperationalAlerts(),
-        farmService.getFacilityThresholds('FAC-NSK-01'),
-      ]);
-      setCattleList(c);
-      setFacilities(f);
-      setPlans(p);
-      setOrders(o);
-      setFinancialTrends(r);
-      setProducts(prods);
-      setSensorAlerts(alerts);
-      setThresholdConfig(thresh);
-    } catch (err) {
-      console.error('Failed to load admin executive data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadAllData();
+    let active = true;
+    const fetchAdminData = async () => {
+      try {
+        const [c, f, p, o, prods, alerts, thresh] = await Promise.all([
+          cattleService.getAll(),
+          farmService.getFacilities(),
+          investmentService.getPlans({ includeUnpublished: true }),
+          orderService.getAllOrders(),
+          productService.getProducts(),
+          farmService.getOperationalAlerts(),
+          farmService.getFacilityThresholds('FAC-NSK-01'),
+        ]);
+        if (!active) return;
+        setCattleList(c);
+        setFacilities(f);
+        setPlans(p);
+        setOrders(o);
+        setProducts(prods);
+        setSensorAlerts(alerts);
+        setThresholdConfig(thresh);
+      } catch (err) {
+        console.error('Failed to load admin executive data:', err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    fetchAdminData();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const notify = (msg: string) => {
@@ -236,6 +227,19 @@ export default function AdminPage() {
   });
 
   const activeSensorAlerts = sensorAlerts.filter((a) => a.status !== 'RESOLVED');
+
+  if (loading) {
+    return (
+      <PortalGuard allowedRoles={['admin']}>
+        <PortalLayout allowedRoles={['admin']}>
+          <div className="py-24 text-center">
+            <div className="w-10 h-10 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-slate-600 text-sm font-medium">Loading executive command center...</p>
+          </div>
+        </PortalLayout>
+      </PortalGuard>
+    );
+  }
 
   return (
     <PortalGuard allowedRoles={['admin']}>
@@ -490,7 +494,7 @@ export default function AdminPage() {
                           <XAxis dataKey="day" stroke="#64748B" fontSize={12} tickLine={false} />
                           <YAxis stroke="#64748B" fontSize={12} tickLine={false} domain={[13000, 17000]} tickFormatter={(v) => `${v / 1000}k L`} />
                           <Tooltip
-                            formatter={(v: any) => [`${Number(v).toLocaleString('en-IN')} L`, 'Volume']}
+                            formatter={(v: unknown) => [`${Number(v || 0).toLocaleString('en-IN')} L`, 'Volume']}
                             contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px', fontSize: '12px' }}
                           />
                           <Legend />
@@ -528,7 +532,7 @@ export default function AdminPage() {
                           <XAxis dataKey="name" stroke="#64748B" fontSize={11} tickLine={false} />
                           <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
                           <Tooltip
-                            formatter={(v: any) => [`${v} Units`, 'Cattle Count']}
+                            formatter={(v: unknown) => [`${String(v)} Units`, 'Cattle Count']}
                             contentStyle={{ backgroundColor: '#0F172A', color: '#fff', borderRadius: '8px', fontSize: '12px' }}
                           />
                           <Bar dataKey="housed" name="Housed Units" fill="#14532D" radius={[4, 4, 0, 0]} />
@@ -765,7 +769,7 @@ export default function AdminPage() {
                       <div className="w-2 h-2 rounded-full bg-forest-600 mt-1.5 shrink-0" />
                       <div>
                         <p className="font-semibold text-slate-900">Plan Draft V2 Created</p>
-                        <p className="text-[11px] text-slate-500">Siddharth Nair drafted "A2 Gir Elite Co-Ownership V2"</p>
+                        <p className="text-[11px] text-slate-500">Siddharth Nair drafted &quot;A2 Gir Elite Co-Ownership V2&quot;</p>
                         <span className="text-[10px] text-slate-400 font-mono">10:45 AM • Master Admin</span>
                       </div>
                     </div>
@@ -910,7 +914,7 @@ export default function AdminPage() {
                   variant="forest"
                   size="sm"
                   onClick={() => setNewPlanModalOpen(true)}
-                  className="bg-forest-700 hover:bg-forest-800 text-white"
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white"
                 >
                   <PlusCircle className="w-4 h-4 mr-1.5" />
                   Create New Plan Draft
@@ -977,7 +981,7 @@ export default function AdminPage() {
                                   variant="forest"
                                   size="sm"
                                   onClick={() => handleApprovePlan(p.id)}
-                                  className="h-7 text-xs bg-forest-700 hover:bg-forest-800 text-white"
+                                  className="h-7 text-xs bg-emerald-700 hover:bg-emerald-800 text-white"
                                 >
                                   Approve & Publish
                                 </Button>
@@ -1086,10 +1090,10 @@ export default function AdminPage() {
                             {editingPriceId === prod.id ? (
                               <div className="flex items-center gap-1.5">
                                 <Button
-                                  variant="forest"
+                                  variant="primary"
                                   size="sm"
                                   onClick={() => handleSaveProductPrice(prod.id)}
-                                  className="h-7 text-xs bg-forest-700 text-white"
+                                  className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
                                 >
                                   Save
                                 </Button>
@@ -1110,7 +1114,7 @@ export default function AdminPage() {
                                   setEditingPriceId(prod.id);
                                   setTempPrice(prod.price);
                                 }}
-                                className="h-7 text-xs border-slate-300 text-slate-700"
+                                className="h-7 text-xs border-slate-300 text-slate-700 hover:bg-slate-50"
                               >
                                 Edit Price
                               </Button>
@@ -1390,7 +1394,7 @@ export default function AdminPage() {
                 <Button type="button" variant="outline" size="sm" onClick={() => setNewPlanModalOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" variant="forest" size="sm" className="bg-forest-700 text-white">
+                <Button type="submit" variant="primary" size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">
                   Save Plan Draft
                 </Button>
               </div>
@@ -1403,7 +1407,7 @@ export default function AdminPage() {
           <DialogContent className="max-w-md bg-white p-6 border-slate-200">
             <DialogHeader>
               <DialogTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Thermometer className="w-5 h-5 text-forest-700" />
+                <Thermometer className="w-5 h-5 text-emerald-700" />
                 Facility Threshold Configuration
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500">
@@ -1455,7 +1459,7 @@ export default function AdminPage() {
                     id="mistingActive"
                     checked={thresholdConfig.emergencyMistingActive}
                     onChange={(e) => setThresholdConfig({ ...thresholdConfig, emergencyMistingActive: e.target.checked })}
-                    className="h-4 w-4 rounded border-slate-300 text-forest-600 focus:ring-forest-500"
+                    className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                   />
                   <label htmlFor="mistingActive" className="text-slate-800 font-semibold cursor-pointer">
                     Enable Automated High-Pressure Misting Response
@@ -1466,7 +1470,7 @@ export default function AdminPage() {
                   <Button type="button" variant="outline" size="sm" onClick={() => setThresholdModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" variant="forest" size="sm" className="bg-forest-700 text-white">
+                  <Button type="submit" variant="primary" size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">
                     Apply Threshold Rule
                   </Button>
                 </div>

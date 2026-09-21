@@ -432,7 +432,7 @@ export const CATTLE_ASSETS: CattleAsset[] = [
   },
 ];
 
-export const CATTLE: any[] = CATTLE_ASSETS.map((c) => ({
+export const CATTLE: Record<string, unknown>[] = CATTLE_ASSETS.map((c) => ({
   ...c,
   tagNumber: c.rfidTag,
   status: c.healthCondition === 'Optimal' ? 'healthy' : c.healthCondition === 'Under Observation' ? 'under_observation' : 'sick',
@@ -450,8 +450,8 @@ export const CATTLE: any[] = CATTLE_ASSETS.map((c) => ({
 }));
 
 // Legacy interface aliases for backward compatibility during phased UI rewrite
-export type Cattle = any;
-export type Vaccination = any;
-export type HealthLog = any;
-export type CalfDetail = any;
+export type Cattle = Record<string, unknown>;
+export type Vaccination = Record<string, unknown>;
+export type HealthLog = Record<string, unknown>;
+export type CalfDetail = Record<string, unknown>;
 

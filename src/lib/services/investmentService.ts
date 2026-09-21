@@ -7,7 +7,6 @@
 
 import {
   InvestorProfile,
-  DividendLedgerEntry,
   YieldReserveHealth,
   InvestmentPlanConfig,
   PlanLifecycleStatus,
@@ -17,7 +16,7 @@ import { INVESTOR_PROFILES, PLATFORM_YIELD_RESERVE_HEALTH } from '../mockData/in
 
 export { type InvestmentPlanConfig, type PlanLifecycleStatus, type PlanAuditLogEntry };
 
-let investorsStore: InvestorProfile[] = [...INVESTOR_PROFILES];
+const investorsStore: InvestorProfile[] = [...INVESTOR_PROFILES];
 
 export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
   {

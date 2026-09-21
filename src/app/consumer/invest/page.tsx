@@ -13,17 +13,11 @@ import { investmentService, InvestmentPlanConfig } from '@/lib/services';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { formatCurrency } from '@/lib/utils';
 import {
-  TrendingUp,
   ShieldCheck,
-  Milk,
   CheckCircle2,
   Sliders,
-  Award,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
-  HelpCircle,
-  ArrowRight,
   UserCheck,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -112,8 +106,9 @@ export default function ConsumerInvestPage() {
         setModalOpen(false);
         router.push('/investor');
       }, 3500);
-    } catch (err: any) {
-      alert(err.message || 'Error submitting application');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error submitting application';
+      alert(msg);
     }
   };
 
@@ -335,8 +330,8 @@ export default function ConsumerInvestPage() {
 
                 <div className="p-5 pt-0">
                   <Button
-                    variant="forest"
-                    className="w-full bg-forest-700 hover:bg-forest-800 text-white"
+                    variant="primary"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                     onClick={() => handleOpenApply(plan)}
                   >
                     Apply for Co-Ownership
@@ -458,10 +453,10 @@ export default function ConsumerInvestPage() {
                   </Button>
                   <Button
                     type="submit"
-                    variant="forest"
+                    variant="primary"
                     size="sm"
                     disabled={!appForm.agreed}
-                    className="bg-forest-700 hover:bg-forest-800 text-white"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                   >
                     Submit Draft & View Dashboard
                   </Button>

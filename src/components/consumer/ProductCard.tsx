@@ -1,9 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { Product } from '@/lib/mockData/products';
 import { useCartStore } from '@/lib/store/cartStore';
-import { Star, Clock, Plus, Minus, ShoppingCart, Zap } from 'lucide-react';
+import { Star, Plus, Minus, Zap } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -72,11 +73,12 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       {/* Product image area */}
       <div className="relative h-44 bg-[var(--color-surface-muted)] flex items-center justify-center overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
         {/* Subtle overlay for legibility */}

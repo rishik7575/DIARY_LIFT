@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import {
   cattleService,
@@ -36,20 +35,16 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle2,
-  Clock,
   PlusCircle,
   Syringe,
   Baby,
   Stethoscope,
-  Filter,
   Check,
   Search,
   ShieldCheck,
   Calendar,
   Layers,
   Thermometer,
-  Fan,
-  Wind,
   Wrench,
 } from 'lucide-react';
 
@@ -62,7 +57,6 @@ export default function StaffPage() {
   const [operationalAlerts, setOperationalAlerts] = useState<EnvironmentalSensorAlert[]>([]);
   const [vaccinations] = useState<VaccinationScheduleItem[]>(VACCINATION_SCHEDULE);
   const [calves] = useState<CalfBirthRecord[]>(CALF_BIRTH_RECORDS);
-  const [loading, setLoading] = useState(true);
 
   // Mitigation Modal state
   const [mitigationModalOpen, setMitigationModalOpen] = useState(false);
@@ -125,14 +119,12 @@ export default function StaffPage() {
         setMilkLogs(m);
         setAlerts(a);
         setOperationalAlerts(op);
-        if (c.length > 0 && !milkingForm.cattleId) {
-          setMilkingForm((prev) => ({ ...prev, cattleId: c[0].id }));
-          setHealthForm((prev) => ({ ...prev, cattleId: c[0].id }));
+        if (c.length > 0) {
+          setMilkingForm((prev) => (prev.cattleId ? prev : { ...prev, cattleId: c[0].id }));
+          setHealthForm((prev) => (prev.cattleId ? prev : { ...prev, cattleId: c[0].id }));
         }
       } catch (err) {
         console.error('Failed to load farm operations data:', err);
-      } finally {
-        setLoading(false);
       }
     }
     loadStaffData();
@@ -201,8 +193,9 @@ export default function StaffPage() {
         `Successfully logged ${yieldNum}L (${milkingForm.session}) for ${cattle.name} [${cattle.rfidTag}]. Quality: ${updatedRecord.quality.microbialQualityGrade}`
       );
       setMilkingForm((prev) => ({ ...prev, notes: '' }));
-    } catch (err: any) {
-      showFeedback(err.message || 'Failed to record milking session.', true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to record milking session.';
+      showFeedback(msg, true);
     }
   };
 
@@ -212,8 +205,9 @@ export default function StaffPage() {
       const updated = await healthService.acknowledgeAlert(alertId, 'Field veterinary inspection performed by shift manager.');
       setAlerts((prev) => prev.map((a) => (a.id === alertId ? updated : a)));
       showFeedback(`Alert ${alertId} resolved and treatment protocol logged.`);
-    } catch (err: any) {
-      showFeedback(err.message || 'Failed to acknowledge alert.', true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to acknowledge alert.';
+      showFeedback(msg, true);
     }
   };
 
@@ -247,8 +241,9 @@ export default function StaffPage() {
       showFeedback(
         `Mitigation recorded for ${resolved.shedName}. Facility ambient conditions returned to safe operating threshold.`
       );
-    } catch (err: any) {
-      showFeedback(err.message || 'Failed to submit mitigation action.', true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to submit mitigation action.';
+      showFeedback(msg, true);
     }
   };
 
@@ -282,8 +277,9 @@ export default function StaffPage() {
         severity: 'HIGH',
       });
       showFeedback(`Clinical examination filed for ${cattle.name}. Alert ALT-${newAlert.id} tracked.`);
-    } catch (err: any) {
-      showFeedback(err.message || 'Failed to create veterinary report.', true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to create veterinary report.';
+      showFeedback(msg, true);
     }
   };
 
@@ -293,8 +289,9 @@ export default function StaffPage() {
       const updated = await cattleService.updateBiologicalStatus(cattleId, newStatus);
       setCattleList((prev) => prev.map((c) => (c.id === cattleId ? updated : c)));
       showFeedback(`Updated ${updated.name} status to "${newStatus.toUpperCase()}".`);
-    } catch (err: any) {
-      showFeedback(err.message || 'Failed to update biological status.', true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to update biological status.';
+      showFeedback(msg, true);
     }
   };
 
@@ -401,7 +398,7 @@ export default function StaffPage() {
         <div className="dl-kpi-grid-4 mt-6">
           <div className="dl-kpi-card">
             <div className="flex items-center justify-between gap-2">
-              <span className="dl-kpi-label">Today's Parlour Yield</span>
+              <span className="dl-kpi-label">Today&apos;s Parlour Yield</span>
               <div
                 className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
                 style={{ background: 'var(--color-brand-light)' }}
@@ -587,8 +584,8 @@ export default function StaffPage() {
 
                       <Button
                         type="submit"
-                        variant="forest"
-                        className="w-full bg-forest-700 hover:bg-forest-800 text-white font-medium py-2.5 mt-2"
+                        variant="primary"
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 mt-2 shadow-sm"
                       >
                         Submit & Validate Parlour Entry
                       </Button>
@@ -601,7 +598,7 @@ export default function StaffPage() {
                   <CardHeader className="border-b border-slate-100 pb-4 flex flex-row items-center justify-between">
                     <div>
                       <CardTitle className="text-lg font-bold text-slate-900">
-                        Today's Milking Logs (2026-09-20)
+                        Today&apos;s Milking Logs (2026-09-20)
                       </CardTitle>
                       <CardDescription className="text-xs text-slate-500">
                         Certified AM/PM yields with lab-calibrated composite indices.
@@ -865,10 +862,10 @@ export default function StaffPage() {
                               </Badge>
                             ) : (
                               <Button
-                                variant="forest"
+                                variant="primary"
                                 size="sm"
                                 onClick={() => handleAcknowledgeAlert(alert.id)}
-                                className="bg-forest-700 hover:bg-forest-800 text-white"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                               >
                                 Acknowledge & Treat
                               </Button>
@@ -1124,7 +1121,7 @@ export default function StaffPage() {
                 <Label className="text-xs font-semibold text-slate-700">Severity Tier</Label>
                 <select
                   value={healthForm.severity}
-                  onChange={(e) => setHealthForm({ ...healthForm, severity: e.target.value as any })}
+                  onChange={(e) => setHealthForm({ ...healthForm, severity: e.target.value as 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'INFO' })}
                   className="w-full mt-1.5 h-10 px-3 border border-slate-300 rounded-md text-sm bg-white"
                 >
                   <option value="CRITICAL">CRITICAL (Immediate Isolation)</option>
@@ -1180,9 +1177,9 @@ export default function StaffPage() {
                 </Button>
                 <Button
                   type="submit"
-                  variant="forest"
+                  variant="primary"
                   size="sm"
-                  className="bg-forest-700 hover:bg-forest-800 text-white"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
                 >
                   Save Exam Report
                 </Button>
