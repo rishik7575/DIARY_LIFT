@@ -13,10 +13,37 @@ import {
   PlanAuditLogEntry,
 } from '../types/investor';
 import { INVESTOR_PROFILES, PLATFORM_YIELD_RESERVE_HEALTH } from '../mockData/investors';
+import { db, isLiveFirebaseConfigured } from '../firebase/config';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 
 export { type InvestmentPlanConfig, type PlanLifecycleStatus, type PlanAuditLogEntry };
 
-const investorsStore: InvestorProfile[] = [...INVESTOR_PROFILES];
+function loadInitialInvestors(): InvestorProfile[] {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('dairylift_investors');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        // fallback
+      }
+    }
+  }
+  return [...INVESTOR_PROFILES];
+}
+
+let investorsStore: InvestorProfile[] = loadInitialInvestors();
+
+function saveInvestorsStore(list: InvestorProfile[]) {
+  investorsStore = list;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('dairylift_investors', JSON.stringify(list));
+    } catch {
+      // ignore
+    }
+  }
+}
 
 export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
   {
@@ -324,6 +351,18 @@ export const investmentService = {
    * Get investor profile and historical portfolio
    */
   async getPortfolio(investorId: string): Promise<InvestorProfile | null> {
+    if (isLiveFirebaseConfigured()) {
+      try {
+        const snap = await getDocs(collection(db, 'investors'));
+        if (!snap.empty) {
+          const list = snap.docs.map((d) => d.data() as InvestorProfile);
+          saveInvestorsStore(list);
+        }
+      } catch (err) {
+        console.warn('Firestore getPortfolio error:', err);
+      }
+    }
+
     await new Promise((res) => setTimeout(res, 40));
     return (
       investorsStore.find((inv) => inv.id === investorId || inv.email === investorId) ||
@@ -356,6 +395,20 @@ export const investmentService = {
     }
 
     const appId = `APP-DL-${Date.now().toString().slice(-6)}`;
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'investment_applications', appId), {
+          ...draft,
+          applicationId: appId,
+          status: 'PENDING_KYC',
+          submittedAt: new Date().toISOString(),
+        });
+      } catch (err) {
+        console.warn('Firestore submitApplication error:', err);
+      }
+    }
+
     return {
       success: true,
       applicationId: appId,

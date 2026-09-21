@@ -1,11 +1,13 @@
 /**
  * DairyLift E-Commerce Order & Fulfillment Service
- * Handles cart math, checkout simulation, and order status progression
+ * Multi-layer persistence: Cloud Firestore with synchronized local client cache
  */
 
 import { OrderFulfillment, DeliveryAddress, DeliverySlotTime, OrderLineItem } from '../types/order';
+import { db, isLiveFirebaseConfigured } from '../firebase/config';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 
-let ordersStore: OrderFulfillment[] = [
+const INITIAL_DEMO_ORDERS: OrderFulfillment[] = [
   {
     orderId: 'ORD-DL-98412',
     userId: 'usr-consumer-01',
@@ -56,6 +58,33 @@ let ordersStore: OrderFulfillment[] = [
   },
 ];
 
+function loadInitialOrders(): OrderFulfillment[] {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('dairylift_orders');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        // fallback
+      }
+    }
+  }
+  return [...INITIAL_DEMO_ORDERS];
+}
+
+let ordersStore: OrderFulfillment[] = loadInitialOrders();
+
+function saveOrdersStore(list: OrderFulfillment[]) {
+  ordersStore = list;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('dairylift_orders', JSON.stringify(list));
+    } catch {
+      // ignore
+    }
+  }
+}
+
 export interface CheckoutInput {
   userId: string;
   items: OrderLineItem[];
@@ -84,10 +113,10 @@ export const orderService = {
   },
 
   /**
-   * Submit new mock order during checkout
+   * Submit new order during checkout
    */
   async createOrder(input: CheckoutInput): Promise<OrderFulfillment> {
-    await new Promise((res) => setTimeout(res, 120));
+    await new Promise((res) => setTimeout(res, 80));
 
     const pricing = this.calculateCartSummary(
       input.items.map((i) => ({ price: i.unitPriceINR, quantity: i.quantity }))
@@ -119,7 +148,17 @@ export const orderService = {
       estimatedDeliveryTime: 'In Chilled Packing (Under 12 Mins)',
     };
 
-    ordersStore = [newOrder, ...ordersStore];
+    const updatedList = [newOrder, ...ordersStore];
+    saveOrdersStore(updatedList);
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'orders', newOrder.orderId), newOrder);
+      } catch (err) {
+        console.warn('Firestore createOrder error:', err);
+      }
+    }
+
     return newOrder;
   },
 
@@ -127,7 +166,19 @@ export const orderService = {
    * Get orders for consumer
    */
   async getOrdersByUser(userId?: string): Promise<OrderFulfillment[]> {
-    await new Promise((res) => setTimeout(res, 40));
+    if (isLiveFirebaseConfigured()) {
+      try {
+        const snap = await getDocs(collection(db, 'orders'));
+        if (!snap.empty) {
+          const remoteList = snap.docs.map((d) => d.data() as OrderFulfillment);
+          saveOrdersStore(remoteList);
+        }
+      } catch (err) {
+        console.warn('Firestore orders fetch error:', err);
+      }
+    }
+
+    await new Promise((res) => setTimeout(res, 30));
     if (!userId) return [...ordersStore];
     return ordersStore.filter((o) => o.userId === userId);
   },
@@ -136,7 +187,19 @@ export const orderService = {
    * Get all orders for Admin fulfillment
    */
   async getAllOrders(): Promise<OrderFulfillment[]> {
-    await new Promise((res) => setTimeout(res, 40));
+    if (isLiveFirebaseConfigured()) {
+      try {
+        const snap = await getDocs(collection(db, 'orders'));
+        if (!snap.empty) {
+          const remoteList = snap.docs.map((d) => d.data() as OrderFulfillment);
+          saveOrdersStore(remoteList);
+        }
+      } catch (err) {
+        console.warn('Firestore getAllOrders error:', err);
+      }
+    }
+
+    await new Promise((res) => setTimeout(res, 30));
     return [...ordersStore];
   },
 
@@ -144,14 +207,27 @@ export const orderService = {
    * Update order status (Admin or Dispatcher)
    */
   async updateOrderStatus(orderId: string, status: OrderFulfillment['status']): Promise<OrderFulfillment> {
-    await new Promise((res) => setTimeout(res, 50));
+    await new Promise((res) => setTimeout(res, 40));
     const index = ordersStore.findIndex((o) => o.orderId === orderId);
     if (index === -1) throw new Error(`Order ${orderId} not found`);
 
-    ordersStore[index] = {
+    const updated: OrderFulfillment = {
       ...ordersStore[index],
       status,
     };
-    return ordersStore[index];
+
+    const updatedList = [...ordersStore];
+    updatedList[index] = updated;
+    saveOrdersStore(updatedList);
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'orders', orderId), updated, { merge: true });
+      } catch (err) {
+        console.warn('Firestore updateOrderStatus error:', err);
+      }
+    }
+
+    return updated;
   },
 };

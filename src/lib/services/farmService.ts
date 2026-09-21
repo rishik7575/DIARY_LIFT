@@ -73,6 +73,55 @@ export const FACILITIES: FarmFacility[] = [
   },
 ];
 
+import { db, isLiveFirebaseConfigured } from '../firebase/config';
+import { doc, setDoc, getDocs, collection } from 'firebase/firestore';
+
+const INITIAL_OP_ALERTS: EnvironmentalSensorAlert[] = [
+  {
+    id: 'OP-ALT-20260920-001',
+    facilityId: 'FAC-NSK-01',
+    facilityName: 'Nashik High-Tech Agro-Park Unit A',
+    shedId: 'SHED-02',
+    shedName: 'Elite A2 Gir Milkers (Shed 2)',
+    sensorId: 'SNSR-ENV-NSK-T02',
+    sensorType: 'TEMPERATURE',
+    metricLabel: 'Ambient Barn Temperature',
+    currentValue: 32.4,
+    thresholdValue: 30.0,
+    unit: '°C',
+    severity: 'HIGH',
+    status: 'NOTIFIED',
+    triggeredAt: '2026-09-20T11:42:00Z',
+  },
+];
+
+function loadInitialOperationalAlerts(): EnvironmentalSensorAlert[] {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('dairylift_sensor_alerts');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        // fallback
+      }
+    }
+  }
+  return [...INITIAL_OP_ALERTS];
+}
+
+let operationalAlertsStore: EnvironmentalSensorAlert[] = loadInitialOperationalAlerts();
+
+function saveOperationalAlerts(list: EnvironmentalSensorAlert[]) {
+  operationalAlertsStore = list;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('dairylift_sensor_alerts', JSON.stringify(list));
+    } catch {
+      // ignore
+    }
+  }
+}
+
 // Initial thresholds store
 const facilityThresholdsStore: Record<string, FarmFacilityThresholdConfig> = {
   'FAC-NSK-01': {
@@ -98,26 +147,6 @@ const facilityThresholdsStore: Record<string, FarmFacilityThresholdConfig> = {
     lastUpdated: '2026-09-20T10:00:00Z',
   },
 };
-
-// Initial operational alerts (contains the Farm A 32.4°C temperature alert exceeding 30.0°C)
-let operationalAlertsStore: EnvironmentalSensorAlert[] = [
-  {
-    id: 'OP-ALT-20260920-001',
-    facilityId: 'FAC-NSK-01',
-    facilityName: 'Nashik High-Tech Agro-Park Unit A',
-    shedId: 'SHED-02',
-    shedName: 'Elite A2 Gir Milkers (Shed 2)',
-    sensorId: 'SNSR-ENV-NSK-T02',
-    sensorType: 'TEMPERATURE',
-    metricLabel: 'Ambient Barn Temperature',
-    currentValue: 32.4,
-    thresholdValue: 30.0,
-    unit: '°C',
-    severity: 'HIGH',
-    status: 'NOTIFIED',
-    triggeredAt: '2026-09-20T11:42:00Z',
-  },
-];
 
 export const farmService = {
   /**
@@ -159,6 +188,18 @@ export const farmService = {
    * Get all active environmental and operational alerts
    */
   async getOperationalAlerts(filter?: { status?: string }): Promise<EnvironmentalSensorAlert[]> {
+    if (isLiveFirebaseConfigured()) {
+      try {
+        const snap = await getDocs(collection(db, 'sensor_alerts'));
+        if (!snap.empty) {
+          const list = snap.docs.map((d) => d.data() as EnvironmentalSensorAlert);
+          saveOperationalAlerts(list);
+        }
+      } catch (err) {
+        console.warn('Firestore sensor alerts fetch error:', err);
+      }
+    }
+
     await new Promise((res) => setTimeout(res, 25));
     if (!filter?.status || filter.status === 'all') return [...operationalAlertsStore];
     return operationalAlertsStore.filter((a) => a.status === filter.status);
@@ -195,6 +236,15 @@ export const farmService = {
     };
 
     operationalAlertsStore[idx] = updated;
+    saveOperationalAlerts([...operationalAlertsStore]);
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'sensor_alerts', alertId), updated, { merge: true });
+      } catch (err) {
+        console.warn('Firestore mitigate alert error:', err);
+      }
+    }
 
     // If it was the temperature alert on Shed 2, normalize ambient temp in facility
     const facility = FACILITIES.find((f) => f.id === updated.facilityId);
@@ -229,6 +279,23 @@ export const farmService = {
       lastUpdated: new Date().toISOString(),
     };
     facilityThresholdsStore[facilityId] = updated;
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('dairylift_facility_thresholds', JSON.stringify(facilityThresholdsStore));
+      } catch {
+        // ignore
+      }
+    }
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'facilities', facilityId), { thresholds: updated }, { merge: true });
+      } catch (err) {
+        console.warn('Firestore updateFacilityThresholds error:', err);
+      }
+    }
+
     return updated;
   },
 

@@ -64,7 +64,7 @@ const QUICK_DEMO_ACCOUNTS: QuickAccount[] = [
 ];
 
 export default function AuthGatewayPage() {
-  const { login, signup } = useAuth();
+  const { login, loginWithGoogle, signup } = useAuth();
   const router = useRouter();
 
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -73,6 +73,7 @@ export default function AuthGatewayPage() {
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successInfo, setSuccessInfo] = useState<string | null>(null);
 
@@ -81,6 +82,20 @@ export default function AuthGatewayPage() {
     setPassword('123');
     setErrorMsg(null);
     setSuccessInfo(`Selected ${acc.name} — role resolves dynamically from database.`);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setErrorMsg(null);
+    setSuccessInfo(null);
+    const res = await loginWithGoogle();
+    if (res.success && res.redirectUrl) {
+      setSuccessInfo(`Authenticated via Google as ${res.role?.toUpperCase()}! Redirecting to ${res.redirectUrl}...`);
+      router.push(res.redirectUrl);
+    } else {
+      setGoogleLoading(false);
+      setErrorMsg(res.error || 'Google authentication failed.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,7 +171,7 @@ export default function AuthGatewayPage() {
           {/* Card Frame */}
           <div className="bg-[#0B132B]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-black/80 relative">
             {/* Header */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
                 <Sparkles className="w-3.5 h-3.5" />
                 Universal Enterprise Single Sign-On
@@ -166,7 +181,7 @@ export default function AuthGatewayPage() {
               </h1>
               <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-sm mx-auto leading-relaxed">
                 {mode === 'login'
-                  ? 'Enter your registered email. Your assigned portal and permissions will resolve automatically from the database.'
+                  ? 'Sign in via Google or enter your registered corporate email to auto-resolve your authorized portal.'
                   : 'Create your DairyLift member account. You will be provisioned access to consumer quick-commerce and can apply for investor allocation.'}
               </p>
             </div>
@@ -178,6 +193,59 @@ export default function AuthGatewayPage() {
                 <span>{errorMsg}</span>
               </div>
             )}
+
+            {successInfo && (
+              <div className="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                <span>{successInfo}</span>
+              </div>
+            )}
+
+            {/* Google Sign In Button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading || loading}
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-semibold h-11 px-4 rounded-xl border border-white/20 shadow-md transition-all active:scale-[0.99] mb-5 disabled:opacity-60 cursor-pointer"
+            >
+              {googleLoading ? (
+                <span className="flex items-center gap-2 text-xs">
+                  <span className="w-4 h-4 border-2 border-slate-400 border-t-slate-800 rounded-full animate-spin" />
+                  Connecting with Google...
+                </span>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  <span className="text-sm">Continue with Google</span>
+                </>
+              )}
+            </button>
+
+            {/* Divider */}
+            <div className="relative flex items-center justify-center mb-5">
+              <div className="border-t border-white/10 w-full" />
+              <span className="bg-[#0B132B] px-3 text-[11px] font-medium text-slate-400 uppercase tracking-wider shrink-0">
+                or continue with email
+              </span>
+              <div className="border-t border-white/10 w-full" />
+            </div>
 
             {successInfo && (
               <div className="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5">

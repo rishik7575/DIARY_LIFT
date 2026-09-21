@@ -1,12 +1,39 @@
 /**
  * DairyLift Milk Production & Quality Analysis Service
- * Asynchronous service interface with duplicate detection and quality grading
+ * Multi-layer persistence: Cloud Firestore with synchronized local client cache
  */
 
 import { DailyMilkLogRecord, BatchApprovalStatus } from '../types/farm';
 import { DAILY_MILK_LOGS } from '../mockData/farm';
+import { db, isLiveFirebaseConfigured } from '../firebase/config';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 
-let milkLogsStore: DailyMilkLogRecord[] = [...DAILY_MILK_LOGS];
+function loadInitialMilkLogs(): DailyMilkLogRecord[] {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('dairylift_milking_logs');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        // fallback
+      }
+    }
+  }
+  return [...DAILY_MILK_LOGS];
+}
+
+let milkLogsStore: DailyMilkLogRecord[] = loadInitialMilkLogs();
+
+function saveMilkLogsStore(list: DailyMilkLogRecord[]) {
+  milkLogsStore = list;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('dairylift_milking_logs', JSON.stringify(list));
+    } catch {
+      // ignore
+    }
+  }
+}
 
 export interface NewMilkingEntryInput {
   date: string;                   // YYYY-MM-DD
@@ -24,7 +51,19 @@ export const milkProductionService = {
    * Get all daily logs for a given date
    */
   async getDailyLogs(date?: string): Promise<DailyMilkLogRecord[]> {
-    await new Promise((res) => setTimeout(res, 40));
+    if (isLiveFirebaseConfigured()) {
+      try {
+        const snap = await getDocs(collection(db, 'milking_logs'));
+        if (!snap.empty) {
+          const remoteList = snap.docs.map((d) => d.data() as DailyMilkLogRecord);
+          saveMilkLogsStore(remoteList);
+        }
+      } catch (err) {
+        console.warn('Firestore milking logs fetch error:', err);
+      }
+    }
+
+    await new Promise((res) => setTimeout(res, 30));
     if (!date) return [...milkLogsStore];
     return milkLogsStore.filter((log) => log.date === date);
   },
@@ -32,8 +71,11 @@ export const milkProductionService = {
   /**
    * Log milking session with domain validation & duplicate detection
    */
-  async logMilking(input: NewMilkingEntryInput, cattleLookup: { name: string; rfidTag: string; investorId: string | null }): Promise<DailyMilkLogRecord> {
-    await new Promise((res) => setTimeout(res, 80));
+  async logMilking(
+    input: NewMilkingEntryInput,
+    cattleLookup: { name: string; rfidTag: string; investorId: string | null }
+  ): Promise<DailyMilkLogRecord> {
+    await new Promise((res) => setTimeout(res, 50));
 
     // Domain Rule 1: Yield must be positive and within biological bounds (0.5L - 35L)
     if (input.yieldLiters <= 0 || input.yieldLiters > 35) {
@@ -55,8 +97,9 @@ export const milkProductionService = {
       }
 
       // Update existing record with the second session
-      const updatedTotal = (input.session === 'AM' ? input.yieldLiters : existing.amYieldLiters) +
-                           (input.session === 'PM' ? input.yieldLiters : existing.pmYieldLiters);
+      const updatedTotal =
+        (input.session === 'AM' ? input.yieldLiters : existing.amYieldLiters) +
+        (input.session === 'PM' ? input.yieldLiters : existing.pmYieldLiters);
 
       const updatedRecord: DailyMilkLogRecord = {
         ...existing,
@@ -66,14 +109,26 @@ export const milkProductionService = {
         operatorNotes: input.notes ? `${existing.operatorNotes || ''} | ${input.notes}` : existing.operatorNotes,
       };
 
-      milkLogsStore[existingLogIndex] = updatedRecord;
+      const clone = [...milkLogsStore];
+      clone[existingLogIndex] = updatedRecord;
+      saveMilkLogsStore(clone);
+
+      if (isLiveFirebaseConfigured()) {
+        try {
+          await setDoc(doc(db, 'milking_logs', updatedRecord.id), updatedRecord, { merge: true });
+        } catch (err) {
+          console.warn('Firestore logMilking update error:', err);
+        }
+      }
+
       return updatedRecord;
     }
 
     // Calculate quality grade
-    const compositeScore = Math.min(100, Math.round((input.fatPercentage * 10) + (input.snfPercentage * 5)));
+    const compositeScore = Math.min(100, Math.round(input.fatPercentage * 10 + input.snfPercentage * 5));
     const grade = compositeScore >= 90 ? 'Grade-A+' : compositeScore >= 80 ? 'Grade-A' : 'Grade-B';
-    const batchApproval: BatchApprovalStatus = grade === 'Grade-A+' ? 'APPROVED_PREMIUM_COMMERCE' : 'APPROVED_BULK_DAIRY';
+    const batchApproval: BatchApprovalStatus =
+      grade === 'Grade-A+' ? 'APPROVED_PREMIUM_COMMERCE' : 'APPROVED_BULK_DAIRY';
 
     const newRecord: DailyMilkLogRecord = {
       id: `LOG-${input.date.replace(/-/g, '')}-${String(milkLogsStore.length + 1).padStart(3, '0')}`,
@@ -101,7 +156,6 @@ export const milkProductionService = {
       destinationSiloId: 'SILO-A2-FLASH-01',
       operatorEmployeeId: input.operatorEmployeeId,
       operatorNotes: input.notes || 'Recorded via Staff Mobile ERP',
-      // Legacy compatibility
       morningYield: input.session === 'AM' ? input.yieldLiters : 0,
       eveningYield: input.session === 'PM' ? input.yieldLiters : 0,
       totalYield: input.yieldLiters,
@@ -109,15 +163,27 @@ export const milkProductionService = {
       notes: input.notes || '',
     };
 
-    milkLogsStore = [newRecord, ...milkLogsStore];
+    const clone = [newRecord, ...milkLogsStore];
+    saveMilkLogsStore(clone);
+
+    if (isLiveFirebaseConfigured()) {
+      try {
+        await setDoc(doc(db, 'milking_logs', newRecord.id), newRecord);
+      } catch (err) {
+        console.warn('Firestore logMilking create error:', err);
+      }
+    }
+
     return newRecord;
   },
 
   /**
    * Aggregate daily production metrics
    */
-  async getDailyStats(date?: string): Promise<{ totalLiters: number; avgFat: number; avgSnf: number; recordCount: number }> {
-    await new Promise((res) => setTimeout(res, 30));
+  async getDailyStats(
+    date?: string
+  ): Promise<{ totalLiters: number; avgFat: number; avgSnf: number; recordCount: number }> {
+    await new Promise((res) => setTimeout(res, 20));
     const logs = await this.getDailyLogs(date);
     if (logs.length === 0) return { totalLiters: 0, avgFat: 0, avgSnf: 0, recordCount: 0 };
 
