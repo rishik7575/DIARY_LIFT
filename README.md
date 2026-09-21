@@ -4,6 +4,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![Coverage](https://img.shields.io/badge/Yield%20Reserve%20Health-145%25%20Optimal-D97706?style=for-the-badge)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frishik7575%2FDIARY_LIFT)
 
 DairyLift is an institutional-grade, tech-enabled dairy farming, quick-commerce, and agricultural asset co-ownership platform bridging urban capital with high-yield rural livestock farming.
 
