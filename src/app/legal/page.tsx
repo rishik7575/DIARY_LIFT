@@ -89,22 +89,28 @@ export default function LegalPage() {
       <div className="space-y-6">
         
         {/* Header */}
-        <div className="border-b border-[#E2E8F0] pb-5">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl md:text-3xl font-bold font-serif text-[#0F172A] tracking-tight">
+        <div
+          className="pb-6"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1
+              className="font-bold tracking-tight"
+              style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-4xl)', color: 'var(--color-text-primary)' }}
+            >
               Governance, Legal & Compliance
             </h1>
-            <Badge variant="forest" className="text-[11px]">
+            <Badge variant="navy">
               Regulatory Repository
             </Badge>
           </div>
-          <p className="text-xs md:text-sm text-[#64748B] mt-1">
+          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Official operational disclosures, illustrative yield model disclaimers, terms of service, and cold-chain shipping policies.
           </p>
         </div>
 
         {/* Legal Policy Navigation & Body */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
           
           {/* Section Nav */}
           <div className="lg:col-span-4 space-y-2">
@@ -116,19 +122,22 @@ export default function LegalPage() {
                 <button
                   key={sec.id}
                   onClick={() => setActiveSection(sec.id)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all text-xs font-semibold flex items-center gap-3 cursor-pointer ${
+                  className={`w-full text-left p-3.5 rounded-[var(--radius-md)] border transition-all text-xs font-semibold flex items-center gap-3 cursor-pointer ${
                     isActive
-                      ? 'bg-white border-[#14532D] text-[#14532D] shadow-xs ring-1 ring-[#14532D]'
-                      : 'bg-white border-[#E2E8F0] text-[#475569] hover:bg-[#F8FAFC]'
+                      ? 'bg-white border-[var(--color-brand)] text-[var(--color-brand)] shadow-xs ring-1 ring-[var(--color-brand)]'
+                      : 'bg-white border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-primary)]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#14532D]' : 'text-[#64748B]'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[var(--color-brand)]' : 'text-[var(--color-text-tertiary)]'}`} />
                   <span className="truncate">{sec.title}</span>
                 </button>
               );
             })}
 
-            <div className="p-4 rounded-xl bg-[#FDF9F0] border border-[#EEDDB4] text-xs text-[#92400E] mt-4 space-y-1">
+            <div
+              className="p-4 rounded-[var(--radius-md)] text-xs mt-4 space-y-1"
+              style={{ background: 'var(--color-accent-light)', border: '1px solid var(--color-border)', color: 'var(--color-accent-dark)' }}
+            >
               <span className="font-bold block">Document Integrity:</span>
               <p>
                 These terms are operational specifications for the DairyLift demonstration platform. No real financial investment or real-money transactions are processed in Phase 1.
@@ -139,10 +148,10 @@ export default function LegalPage() {
           {/* Section Detail Card */}
           <div className="lg:col-span-8">
             {LEGAL_SECTIONS.filter((s) => s.id === activeSection).map((sec) => (
-              <Card key={sec.id} className="dl-card border-[#E2E8F0] p-6 space-y-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-[#F1F5F9]">
-                  <sec.icon className="w-5 h-5 text-[#14532D]" />
-                  <h2 className="text-base font-bold text-[#0F172A]">{sec.title}</h2>
+              <Card key={sec.id} className="dl-card p-6 space-y-4">
+                <div className="flex items-center gap-2 pb-3 border-b border-[var(--color-border)]">
+                  <sec.icon className="w-5 h-5" style={{ color: 'var(--color-brand)' }} />
+                  <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>{sec.title}</h2>
                 </div>
                 {sec.content}
               </Card>

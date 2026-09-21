@@ -3,34 +3,47 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
+  // Base — all badges share these fundamentals
+  'inline-flex items-center gap-1 rounded-full font-semibold tracking-wide border whitespace-nowrap leading-none',
   {
     variants: {
       variant: {
+        // Brand / Forest
         default:
-          'bg-[#14532D] text-white shadow-xs',
+          'bg-emerald-50 text-emerald-800 border-emerald-200 text-[11px] px-2.5 py-1',
         forest:
-          'bg-[#F0FDF4] text-[#14532D] border border-[#BBF7D0]',
+          'bg-emerald-50 text-emerald-800 border-emerald-200 text-[11px] px-2.5 py-1',
+        // Gold / Accent
         gold:
-          'bg-[#FDF9F0] text-[#A67920] border border-[#EEDDB4]',
-        secondary:
-          'bg-[#F8FAFC] text-[#475569] border border-[#E2E8F0]',
-        destructive:
-          'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]',
-        danger:
-          'bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA]',
-        warning:
-          'bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]',
-        info:
-          'bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]',
+          'bg-amber-50 text-amber-800 border-amber-200 text-[11px] px-2.5 py-1',
+        accent:
+          'bg-amber-50 text-amber-800 border-amber-200 text-[11px] px-2.5 py-1',
+        // Status
         success:
-          'bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]',
+          'bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] px-2.5 py-1',
+        warning:
+          'bg-amber-50 text-amber-800 border-amber-200 text-[11px] px-2.5 py-1',
+        destructive:
+          'bg-red-50 text-red-700 border-red-200 text-[11px] px-2.5 py-1',
+        danger:
+          'bg-red-50 text-red-700 border-red-200 text-[11px] px-2.5 py-1',
+        info:
+          'bg-blue-50 text-blue-700 border-blue-200 text-[11px] px-2.5 py-1',
+        // Muted / neutral
+        secondary:
+          'bg-slate-100 text-slate-700 border-slate-200 text-[11px] px-2.5 py-1',
+        muted:
+          'bg-slate-100 text-slate-700 border-slate-200 text-[11px] px-2.5 py-1',
         outline:
-          'text-[#0F172A] border border-[#CBD5E1] bg-white',
+          'bg-white text-slate-800 border-slate-200 text-[11px] px-2.5 py-1',
+        // Solid fills
+        solid:
+          'bg-emerald-600 text-white border-emerald-600 text-[11px] px-2.5 py-1',
         navy:
-          'bg-[#0F172A] text-white shadow-xs',
+          'bg-slate-900 text-white border-slate-900 text-[11px] px-2.5 py-1',
+        // Simulation disclaimer
         simulation:
-          'bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D] font-bold tracking-wider text-[10px] uppercase',
+          'bg-amber-100 text-amber-900 border-amber-300 text-[10px] px-2 py-0.5 uppercase tracking-wider font-bold',
       },
     },
     defaultVariants: {

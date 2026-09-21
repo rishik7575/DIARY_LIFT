@@ -25,10 +25,52 @@ interface AuthContextType {
   isAuthenticated: boolean;
 }
 
-// Mock credentials — hardcoded demo accounts
+// Mock credentials — requested accounts (pass: 123) and legacy aliases
 const MOCK_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
+  'admin@gmail.com': {
+    password: '123',
+    user: {
+      id: 'u-admin-01',
+      name: 'Admin Director',
+      email: 'admin@gmail.com',
+      role: 'admin',
+      avatar: 'AD',
+    },
+  },
+  'staff@gmail.com': {
+    password: '123',
+    user: {
+      id: 'u-staff-01',
+      name: 'Farm Shift Lead',
+      email: 'staff@gmail.com',
+      role: 'staff',
+      avatar: 'FS',
+    },
+  },
+  'investor@gmail.com': {
+    password: '123',
+    user: {
+      id: 'u-investor-01',
+      name: 'Portfolio Investor',
+      email: 'investor@gmail.com',
+      role: 'investor',
+      avatar: 'PI',
+      investorId: 'inv001',
+    },
+  },
+  'rishik@gmail.com': {
+    password: '123',
+    user: {
+      id: 'u-consumer-01',
+      name: 'Rishik',
+      email: 'rishik@gmail.com',
+      role: 'consumer',
+      avatar: 'RK',
+    },
+  },
+  // Legacy aliases for backward compatibility
   'consumer@dairylift.com': {
-    password: 'consumer123',
+    password: '123',
     user: {
       id: 'u010',
       name: 'Aarav Shah',
@@ -38,7 +80,7 @@ const MOCK_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
     },
   },
   'investor@dairylift.com': {
-    password: 'investor123',
+    password: '123',
     user: {
       id: 'u001',
       name: 'Arjun Mehta',
@@ -49,7 +91,7 @@ const MOCK_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
     },
   },
   'staff@dairylift.com': {
-    password: 'staff123',
+    password: '123',
     user: {
       id: 'u006',
       name: 'Raju Kumar',
@@ -59,7 +101,7 @@ const MOCK_ACCOUNTS: Record<string, { password: string; user: AuthUser }> = {
     },
   },
   'admin@dairylift.com': {
-    password: 'admin123',
+    password: '123',
     user: {
       id: 'u011',
       name: 'Admin User',

@@ -128,29 +128,34 @@ export default function ConsumerInvestPage() {
       <PortalLayout allowedRoles={['consumer', 'investor', 'admin']}>
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+        <div
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1
+                className="font-bold tracking-tight"
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-4xl)', color: 'var(--color-text-primary)' }}
+              >
                 Cattle Co-Ownership & Wealth Suite
               </h1>
-              <Badge className="bg-amber-100 text-amber-900 border-amber-300 font-medium">
+              <Badge variant="gold">
                 1.5% Base + Dynamic Bonus
               </Badge>
             </div>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
               Participate in high-yield, insured indigenous livestock agriculture with verifiable parlour milk returns.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 shrink-0">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={handleDirectDemoUpgrade}
-              className="border-slate-300 text-slate-700 hover:bg-slate-100"
             >
-              <UserCheck className="w-4 h-4 mr-2 text-forest-700" />
+              <UserCheck className="w-3.5 h-3.5 mr-1.5" style={{ color: 'var(--color-brand)' }} />
               Demo: Instant Investor Mode
             </Button>
           </div>

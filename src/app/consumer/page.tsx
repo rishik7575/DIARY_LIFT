@@ -46,56 +46,55 @@ export default function ConsumerPage() {
         <CartDrawer />
 
         {/* Co-ownership Promotional Banner */}
-        <div className="bg-gradient-to-r from-slate-900 via-forest-950 to-slate-900 text-white rounded-2xl p-4 md:p-6 mb-8 border border-forest-800/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white rounded-2xl p-4 sm:p-5 mb-6 border border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge className="bg-amber-500/20 text-amber-300 border-amber-400/30 text-[11px] font-semibold">
                 ⭐ Institutional Co-Ownership
               </Badge>
-              <span className="text-xs text-slate-300">Operational Simulation Model • Illustrative Demo</span>
+              <span className="text-[11px] text-slate-400">Illustrative Demo Model</span>
             </div>
-            <h2 className="text-lg md:text-xl font-bold font-serif text-white tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight font-sans">
               Love Farm-Fresh Dairy? Co-Own the Cattle that Produces It.
             </h2>
-            <p className="text-xs text-slate-300 max-w-2xl">
-              Earn a fixed <strong>1.5% monthly base yield (18% APY)</strong> plus dynamic performance milk bonuses, backstopped by our 145% Yield Reserve Health fund.
+            <p className="text-xs text-slate-300 max-w-xl">
+              Earn a fixed <strong>1.5% monthly base yield (18% APY)</strong> plus dynamic performance milk bonuses, backstopped by our 145% Yield Reserve fund.
             </p>
           </div>
 
           <Link href="/consumer/invest" className="shrink-0">
             <Button
-              variant="forest"
+              variant="primary"
               size="sm"
-              className="bg-forest-600 hover:bg-forest-500 text-white font-semibold text-xs py-2 px-4 shadow-sm"
+              className="text-xs font-semibold px-4"
             >
-              Explore Cattle Co-Ownership <ChevronRight className="w-4 h-4 ml-1" />
+              Explore Co-Ownership <ChevronRight className="w-3.5 h-3.5 ml-1" />
             </Button>
           </Link>
         </div>
 
         {/* Storefront Header & Filter Bar */}
-        <div className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <div className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
                 Fresh Farm Catalog
               </h1>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 A2 Gir Cow Milk, Hand-Churned Bilona Ghee, and Cultured Dairy delivered in under 15 minutes.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              {/* Cart trigger button */}
+            <div className="flex items-center gap-3 shrink-0">
               <Button
-                variant="forest"
+                variant="primary"
                 onClick={openCart}
-                className="bg-forest-700 hover:bg-forest-800 text-white font-medium flex items-center gap-2 relative shadow-sm"
+                className="text-xs font-semibold flex items-center gap-2 relative shadow-xs"
               >
                 <ShoppingCart className="w-4 h-4" />
                 <span>Cart ({cartCount})</span>
                 {cartCount > 0 && (
-                  <span className="bg-amber-500 text-slate-900 text-[11px] font-bold px-1.5 py-0.5 rounded-full ml-1">
+                  <span className="bg-amber-400 text-slate-900 text-[11px] font-bold px-1.5 py-0.2 rounded-full ml-1 font-mono">
                     ₹{cartSubtotal}
                   </span>
                 )}

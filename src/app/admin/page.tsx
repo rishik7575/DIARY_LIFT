@@ -242,41 +242,41 @@ export default function AdminPage() {
       <PortalLayout allowedRoles={['admin']}>
         
         {/* Page Executive Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
                 Executive Command Center
               </h1>
-              <Badge className="bg-slate-900 text-white font-mono text-xs">
+              <Badge variant="navy">
                 Master Governance
               </Badge>
             </div>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Cross-portal oversight, environmental IoT sensor alarms, investment plan governance, and store pricing.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
             <Button
               variant="outline"
               size="sm"
               onClick={handleSimulateSpike}
-              className="border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 text-xs font-semibold"
+              className="text-xs font-semibold"
             >
-              <Thermometer className="w-3.5 h-3.5 mr-1 text-amber-700" />
-              Simulate Sensor Spike (33.1°C)
+              <Thermometer className="w-3.5 h-3.5 mr-1 text-amber-600" />
+              Simulate Spike (33.1°C)
             </Button>
             <Button
-              variant="forest"
+              variant="primary"
               size="sm"
               onClick={() => {
                 setActiveTab('plans');
                 setNewPlanModalOpen(true);
               }}
-              className="bg-forest-700 hover:bg-forest-800 text-white text-xs font-semibold"
+              className="text-xs font-semibold"
             >
-              <PlusCircle className="w-4 h-4 mr-1" />
+              <PlusCircle className="w-3.5 h-3.5 mr-1" />
               Draft Investment Plan
             </Button>
           </div>
@@ -339,106 +339,108 @@ export default function AdminPage() {
         {/* Master Tabbed Command Interface */}
         <div className="mt-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-slate-200/80 p-1 rounded-lg">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <TrendingUp className="w-4 h-4 mr-2" />
+            <TabsList
+              className="flex flex-wrap gap-1 p-1 rounded-[var(--radius-md)]"
+              style={{ background: 'var(--color-surface-muted)', border: '1px solid var(--color-border)' }}
+            >
+              <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold">
+                <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
                 Executive Analytics
               </TabsTrigger>
-              <TabsTrigger value="sensors" className="data-[state=active]:bg-white data-[state=active]:shadow-sm relative">
-                <Thermometer className="w-4 h-4 mr-2" />
-                Environmental Sensor Ops
+              <TabsTrigger value="sensors" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold relative">
+                <Thermometer className="w-3.5 h-3.5 mr-1.5" />
+                Environmental Ops
                 {activeSensorAlerts.length > 0 && (
-                  <span className="ml-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                  <span
+                    className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                    style={{ background: 'var(--color-danger)' }}
+                  >
                     {activeSensorAlerts.length}
                   </span>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="plans" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Sliders className="w-4 h-4 mr-2" />
-                Plan Governance & Lifecycle ({plans.length})
+              <TabsTrigger value="plans" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold">
+                <Sliders className="w-3.5 h-3.5 mr-1.5" />
+                Plan Governance ({plans.length})
               </TabsTrigger>
-              <TabsTrigger value="pricing" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Tag className="w-4 h-4 mr-2" />
-                Store Pricing & Inventory
+              <TabsTrigger value="pricing" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold">
+                <Tag className="w-3.5 h-3.5 mr-1.5" />
+                Store Pricing
               </TabsTrigger>
-              <TabsTrigger value="cattle" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Milk className="w-4 h-4 mr-2" />
-                Cattle Herd Registry
+              <TabsTrigger value="cattle" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold">
+                <Milk className="w-3.5 h-3.5 mr-1.5" />
+                Cattle Registry
               </TabsTrigger>
-              <TabsTrigger value="orders" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Package className="w-4 h-4 mr-2" />
-                E-Commerce Orders ({orders.length})
+              <TabsTrigger value="orders" className="data-[state=active]:bg-white data-[state=active]:text-brand data-[state=active]:shadow-xs text-xs font-semibold">
+                <Package className="w-3.5 h-3.5 mr-1.5" />
+                Orders ({orders.length})
               </TabsTrigger>
             </TabsList>
 
             {/* TAB 1: EXECUTIVE ANALYTICS */}
             <TabsContent value="overview" className="space-y-6">
               
-              {/* ROW 1: 4 KPI CARDS (Total Farms, Active Cattle, Today's Milk, Open Alerts) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* ROW 1: 4 KPI CARDS — dl-kpi-card ensures min-width:0 to prevent overflow */}
+              <div className="dl-kpi-grid-4">
                 {/* 1. Total Farms */}
-                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-5 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Farms</p>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-2xl font-bold text-slate-900">{facilities.length || 3} Agro-Parks</span>
-                      </div>
-                      <p className="text-xs text-forest-700 font-medium mt-1">100% Telemetry Online</p>
+                <div className="dl-kpi-card">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="dl-kpi-label">Total Farms</span>
+                    <div
+                      className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                      style={{ background: 'var(--color-brand-light)' }}
+                    >
+                      <Building2 className="w-4.5 h-4.5" style={{ color: 'var(--color-brand)' }} />
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-700">
-                      <Building2 className="w-6 h-6" />
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <span className="dl-kpi-value">{facilities.length || 3} Parks</span>
+                  <span className="dl-kpi-trend-up"><ArrowUpRight className="w-3 h-3" />100% Online</span>
+                </div>
 
                 {/* 2. Active Cattle */}
-                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-5 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Cattle</p>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-2xl font-bold text-slate-900">1,280 Units</span>
-                      </div>
-                      <p className="text-xs text-forest-700 font-medium mt-1">94% Barn Occupancy • RFID Mapped</p>
+                <div className="dl-kpi-card">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="dl-kpi-label">Active Cattle</span>
+                    <div
+                      className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                      style={{ background: 'var(--color-brand-light)' }}
+                    >
+                      <Milk className="w-4 h-4" style={{ color: 'var(--color-brand)' }} />
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700">
-                      <Milk className="w-6 h-6" />
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <span className="dl-kpi-value">1,280</span>
+                  <span className="dl-kpi-context">94% Barn Occupancy · RFID Mapped</span>
+                </div>
 
                 {/* 3. Today's Milk */}
-                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-5 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Milk</p>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-2xl font-bold text-slate-900">15,840 Liters</span>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">91% Grade-A+ • 4.85% Avg Fat</p>
+                <div className="dl-kpi-card">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="dl-kpi-label">Today&apos;s Milk</span>
+                    <div
+                      className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                      style={{ background: 'var(--color-accent-light)' }}
+                    >
+                      <TrendingUp className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700">
-                      <TrendingUp className="w-6 h-6" />
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <span className="dl-kpi-value">15,840 L</span>
+                  <span className="dl-kpi-context">91% Grade-A+ · 4.85% Avg Fat</span>
+                </div>
 
                 {/* 4. Open Alerts */}
-                <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-5 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Open Alerts</p>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-2xl font-bold text-slate-900">{activeSensorAlerts.length + 2} Pending</span>
-                      </div>
-                      <p className="text-xs text-red-600 font-medium mt-1">1 Critical Environmental • 2 Vet Queue</p>
+                <div className="dl-kpi-card">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="dl-kpi-label">Open Alerts</span>
+                    <div
+                      className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                      style={{ background: 'var(--color-danger-bg)' }}
+                    >
+                      <AlertTriangle className="w-4 h-4" style={{ color: 'var(--color-danger)' }} />
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
-                      <AlertTriangle className="w-6 h-6" />
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <span className="dl-kpi-value">{activeSensorAlerts.length + 2}</span>
+                  <span className="dl-kpi-trend-down">1 Critical · 2 Vet Queue</span>
+                </div>
               </div>
 
               {/* ROW 2: MILK PRODUCTION TREND & FARM HEALTH OVERVIEW */}

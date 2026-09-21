@@ -321,38 +321,38 @@ export default function StaffPage() {
     <PortalGuard allowedRoles={['staff', 'admin']}>
       <PortalLayout allowedRoles={['staff', 'admin']}>
         {/* Page Executive Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
                 Farm Operations ERP
               </h1>
-              <Badge variant="outline" className="border-forest-600/30 text-forest-700 bg-forest-50 font-medium">
-                Shed Parlour Shift Active
+              <Badge variant="success">
+                Shed Parlour Active
               </Badge>
             </div>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Field Telemetry, Automated Milking Parlour Logging, and Veterinary Biometric Health Suite.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setHealthModalOpen(true)}
-              className="border-slate-300 text-slate-700 hover:bg-slate-100"
+              className="text-xs font-semibold"
             >
-              <Stethoscope className="w-4 h-4 mr-2 text-forest-700" />
+              <Stethoscope className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
               File Vet Exam
             </Button>
             <Button
-              variant="forest"
+              variant="primary"
               size="sm"
               onClick={() => setActiveTab('milking')}
-              className="bg-forest-700 hover:bg-forest-800 text-white"
+              className="text-xs font-semibold"
             >
-              <PlusCircle className="w-4 h-4 mr-2" />
+              <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
               Log Milking Session
             </Button>
           </div>
@@ -360,14 +360,18 @@ export default function StaffPage() {
 
         {/* Action Alert Banner */}
         {successBanner && (
-          <div className="mt-4 p-4 rounded-lg bg-forest-50 border border-forest-200 text-forest-800 flex items-center justify-between animate-fadeIn">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-forest-700 shrink-0" />
+          <div
+            className="mt-4 p-4 rounded-[var(--radius-md)] flex items-center justify-between animate-fadeIn"
+            style={{ background: 'var(--color-brand-light)', border: '1px solid var(--color-border)', color: 'var(--color-brand-dark)' }}
+          >
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: 'var(--color-brand)' }} />
               <span className="text-sm font-medium">{successBanner}</span>
             </div>
             <button
               onClick={() => setSuccessBanner(null)}
-              className="text-forest-600 hover:text-forest-900 text-xs font-bold px-2 py-1"
+              className="text-xs font-bold px-2 py-1 hover:underline cursor-pointer"
+              style={{ color: 'var(--color-brand-dark)' }}
             >
               Dismiss
             </button>
@@ -375,14 +379,18 @@ export default function StaffPage() {
         )}
 
         {errorMessage && (
-          <div className="mt-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 flex items-center justify-between animate-fadeIn">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-700 shrink-0" />
+          <div
+            className="mt-4 p-4 rounded-[var(--radius-md)] flex items-center justify-between animate-fadeIn"
+            style={{ background: 'var(--color-danger-bg)', border: '1px solid #FECACA', color: 'var(--color-danger)' }}
+          >
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: 'var(--color-danger)' }} />
               <span className="text-sm font-medium">{errorMessage}</span>
             </div>
             <button
               onClick={() => setErrorMessage(null)}
-              className="text-red-600 hover:text-red-900 text-xs font-bold px-2 py-1"
+              className="text-xs font-bold px-2 py-1 hover:underline cursor-pointer"
+              style={{ color: 'var(--color-danger)' }}
             >
               Dismiss
             </button>
@@ -390,98 +398,94 @@ export default function StaffPage() {
         )}
 
         {/* Operational KPI Metric Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Parlour Yield</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{todayTotalLiters.toFixed(1)} L</span>
-                  <span className="text-xs text-forest-700 font-medium">AM + PM</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">Target: 320.0 L/day</p>
+        <div className="dl-kpi-grid-4 mt-6">
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Today's Parlour Yield</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-brand-light)' }}
+              >
+                <Milk className="w-4 h-4" style={{ color: 'var(--color-brand)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-700">
-                <Milk className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{todayTotalLiters.toFixed(1)} L</span>
+            <span className="dl-kpi-context">Target: 320.0 L/day · AM + PM</span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Grade-A+ Quality Ratio</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">
-                    {milkLogs.length > 0 ? Math.round((gradeAPlusCount / milkLogs.length) * 100) : 0}%
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">({gradeAPlusCount} batches)</span>
-                </div>
-                <p className="text-xs text-forest-700 font-medium mt-1">Direct Commerce Grade</p>
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Grade-A+ Quality Ratio</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-accent-light)' }}
+              >
+                <ShieldCheck className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">
+              {milkLogs.length > 0 ? Math.round((gradeAPlusCount / milkLogs.length) * 100) : 0}%
+            </span>
+            <span className="dl-kpi-context">Direct Commerce Grade · {gradeAPlusCount} batches</span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Vet/IoT Alerts</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{totalActiveAlertsCount}</span>
-                  {criticalCount > 0 && (
-                    <span className="text-xs font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
-                      {criticalCount} Critical
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-slate-500 mt-1">
-                  {activeSensorAlertsCount} Sensor • {activeVetAlertsCount} Vet Flags
-                </p>
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Active Vet/IoT Alerts</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: totalActiveAlertsCount > 0 ? 'var(--color-danger-bg)' : 'var(--color-surface-muted)' }}
+              >
+                <Activity className="w-4 h-4" style={{ color: totalActiveAlertsCount > 0 ? 'var(--color-danger)' : 'var(--color-text-secondary)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700">
-                <Activity className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{totalActiveAlertsCount}</span>
+            <span className={criticalCount > 0 ? "dl-kpi-trend-down" : "dl-kpi-context"}>
+              {criticalCount > 0 ? `${criticalCount} Critical Alarms · ` : ''}{activeSensorAlertsCount} Sensor · {activeVetAlertsCount} Vet Flags
+            </span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Herd Size</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{cattleList.length}</span>
-                  <span className="text-xs text-slate-500 font-medium">Registered RFID</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">3 Production Sheds</p>
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Active Herd Size</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-surface-muted)' }}
+              >
+                <Layers className="w-4 h-4" style={{ color: 'var(--color-text-secondary)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-                <Layers className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{cattleList.length}</span>
+            <span className="dl-kpi-context">Registered RFID · 3 Production Sheds</span>
+          </div>
         </div>
 
         {/* Main Tabbed Operations Interface */}
         <div className="mt-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-slate-200/80 p-1 rounded-lg">
-              <TabsTrigger value="milking" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Milk className="w-4 h-4 mr-2" />
+            <TabsList className="flex items-center gap-1.5 p-1 max-w-full overflow-x-auto scrollbar-none">
+              <TabsTrigger value="milking" className="shrink-0 whitespace-nowrap">
+                <Milk className="w-3.5 h-3.5 mr-1.5" />
                 Parlour Milking Logs
               </TabsTrigger>
-              <TabsTrigger value="health" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Activity className="w-4 h-4 mr-2" />
-                Veterinary & IoT Alerts ({totalActiveAlertsCount})
+              <TabsTrigger value="health" className="relative shrink-0 whitespace-nowrap">
+                <Activity className="w-3.5 h-3.5 mr-1.5" />
+                Veterinary & IoT Alerts
+                {totalActiveAlertsCount > 0 && (
+                  <span
+                    className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                    style={{ background: criticalCount > 0 ? 'var(--color-danger)' : 'var(--color-accent)' }}
+                  >
+                    {totalActiveAlertsCount}
+                  </span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="herd" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Layers className="w-4 h-4 mr-2" />
+              <TabsTrigger value="herd" className="shrink-0 whitespace-nowrap">
+                <Layers className="w-3.5 h-3.5 mr-1.5" />
                 Herd & Biological Status
               </TabsTrigger>
-              <TabsTrigger value="records" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Calendar className="w-4 h-4 mr-2" />
+              <TabsTrigger value="records" className="shrink-0 whitespace-nowrap">
+                <Calendar className="w-3.5 h-3.5 mr-1.5" />
                 Vaccines & Calves
               </TabsTrigger>
             </TabsList>

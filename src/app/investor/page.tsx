@@ -158,129 +158,120 @@ export default function InvestorDashboard() {
       <PortalLayout allowedRoles={['investor', 'consumer', 'admin']}>
         
         {/* Executive Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold font-serif text-slate-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-sans">
                 Investor Financial Suite
               </h1>
-              <Badge className="bg-forest-100 text-forest-800 border-forest-200 font-medium">
-                KYC Verified • {profile.tier}
+              <Badge variant="success">
+                KYC Verified · {profile.tier}
               </Badge>
             </div>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Institutional Livestock Co-Ownership with 1.5% Fixed Monthly Base + Dynamic Milk Performance Bonus.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200 text-xs font-mono text-slate-700">
-              <ShieldCheck className="w-4 h-4 text-forest-700" />
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <ShieldCheck className="w-3.5 h-3.5" />
               <span>Escrow Coverage: <strong>145%</strong></span>
             </div>
             <Button
-              variant="forest"
+              variant="primary"
               size="sm"
               onClick={() => setActiveTab('discovery')}
-              className="bg-forest-700 hover:bg-forest-800 text-white"
+              className="text-xs font-semibold"
             >
-              <TrendingUp className="w-4 h-4 mr-2" />
+              <TrendingUp className="w-3.5 h-3.5 mr-1" />
               Explore Allocation Plans
             </Button>
           </div>
         </div>
 
         {/* Financial KPI Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Capital Invested</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{formatCurrency(p.totalInvestedINR)}</span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">{p.activeCattleCount} Managed Cattle Units</p>
+        <div className="dl-kpi-grid-4 mt-6">
+          {/* 1. Total Capital Invested */}
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Capital Invested</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-surface-muted)', border: '1px solid var(--color-border)' }}
+              >
+                <DollarSign className="w-4 h-4" style={{ color: 'var(--color-text-secondary)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-                <DollarSign className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{formatCurrency(p.totalInvestedINR)}</span>
+            <span className="dl-kpi-context">{p.activeCattleCount} Managed Cattle</span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Current Portfolio Valuation</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{formatCurrency(p.currentPortfolioValuationINR)}</span>
-                </div>
-                <p className="text-xs text-forest-700 font-medium mt-1">
-                  +{formatCurrency(p.unrealizedAppreciationINR)} Biological Gain
-                </p>
+          {/* 2. Portfolio Valuation */}
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Portfolio Valuation</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-brand-light)' }}
+              >
+                <TrendingUp className="w-4 h-4" style={{ color: 'var(--color-brand)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-700">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{formatCurrency(p.currentPortfolioValuationINR)}</span>
+            <span className="dl-kpi-trend-up"><ArrowUpRight className="w-3 h-3" />+{formatCurrency(p.unrealizedAppreciationINR)} Biological Gain</span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Effective Monthly Yield</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">
-                    {(p.blendedMonthlyYieldRate * 100).toFixed(2)}%
-                  </span>
-                  <span className="text-xs text-slate-500">/mo</span>
-                </div>
-                <p className="text-xs text-amber-700 font-medium mt-1">
-                  1.5% Base + {(p.currentPerformanceBonusRate * 100).toFixed(2)}% Milk Bonus
-                </p>
+          {/* 3. Monthly Yield */}
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Monthly Yield</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-accent-light)' }}
+              >
+                <Milk className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700">
-                <Milk className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{(p.blendedMonthlyYieldRate * 100).toFixed(2)}%<span className="text-sm font-normal ml-1" style={{ color: 'var(--color-text-muted)' }}>/mo</span></span>
+            <span className="dl-kpi-context">1.5% Base + {(p.currentPerformanceBonusRate * 100).toFixed(2)}% Bonus</span>
+          </div>
 
-          <Card className="border-slate-200 bg-white shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cumulative Disbursements</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">
-                    {formatCurrency(p.totalDividendsPaidToDateINR)}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 mt-1">Paid to {profile.bankDetails.bankName}</p>
+          {/* 4. Cumulative Disbursements */}
+          <div className="dl-kpi-card">
+            <div className="flex items-center justify-between gap-2">
+              <span className="dl-kpi-label">Disbursed to Date</span>
+              <div
+                className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                style={{ background: 'var(--color-info-bg)' }}
+              >
+                <Calendar className="w-4 h-4" style={{ color: 'var(--color-info)' }} />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
-                <Calendar className="w-6 h-6" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+            <span className="dl-kpi-value">{formatCurrency(p.totalDividendsPaidToDateINR)}</span>
+            <span className="dl-kpi-context">Paid to {profile.bankDetails.bankName}</span>
+          </div>
         </div>
 
         {/* Tabbed Navigation */}
         <div className="mt-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-slate-200/80 p-1 rounded-lg">
-              <TabsTrigger value="portfolio" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Yield Performance & Reserves
+            <TabsList className="flex items-center gap-1.5 p-1 max-w-full overflow-x-auto scrollbar-none">
+              <TabsTrigger value="portfolio" className="shrink-0 whitespace-nowrap">
+                <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
+                Yield &amp; Reserves
               </TabsTrigger>
-              <TabsTrigger value="cattle" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Milk className="w-4 h-4 mr-2" />
-                My Allocated Cattle ({assignedCattle.length})
+              <TabsTrigger value="cattle" className="shrink-0 whitespace-nowrap">
+                <Milk className="w-3.5 h-3.5 mr-1.5" />
+                My Cattle ({assignedCattle.length})
               </TabsTrigger>
-              <TabsTrigger value="ledger" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <FileText className="w-4 h-4 mr-2" />
-                Dividend Ledger & NEFT Audit
+              <TabsTrigger value="ledger" className="shrink-0 whitespace-nowrap">
+                <FileText className="w-3.5 h-3.5 mr-1.5" />
+                Dividend Ledger
               </TabsTrigger>
-              <TabsTrigger value="discovery" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
-                <Sliders className="w-4 h-4 mr-2" />
-                Plan Discovery & Yield Calculator
+              <TabsTrigger value="discovery" className="shrink-0 whitespace-nowrap">
+                <Sliders className="w-3.5 h-3.5 mr-1.5" />
+                Plan Discovery &amp; Calculator
               </TabsTrigger>
             </TabsList>
 
