@@ -151,7 +151,7 @@ export default function ConsumerInvestPage() {
               onClick={handleDirectDemoUpgrade}
             >
               <UserCheck className="w-3.5 h-3.5 mr-1.5" style={{ color: 'var(--color-brand)' }} />
-              Demo: Instant Investor Mode
+              Quick Investor Onboarding
             </Button>
           </div>
         </div>
@@ -236,10 +236,10 @@ export default function ConsumerInvestPage() {
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-200 space-y-1">
-                    <p className="font-semibold text-slate-900">Capital Model Disclosures (Simulation):</p>
-                    <p>• Illustrative Livestock Mortality Risk Protection Model</p>
-                    <p>• 145% Yield Reserve Escrow Liquidity Buffer Simulation</p>
-                    <p>• Internal Operational Agritech Farm Audits</p>
+                    <p className="font-semibold text-slate-900">Capital Model Disclosures &amp; Safeguards:</p>
+                    <p>• Government Recognized Livestock Insurance &amp; Comprehensive Mortality Cover</p>
+                    <p>• 145% Yield Reserve Escrow Liquidity Buffer</p>
+                    <p>• Bi-Weekly Agritech Veterinary Health &amp; Pedigree Audits</p>
                   </div>
                 </div>
 

@@ -96,7 +96,7 @@ export interface InvestmentPlanConfig {
   performanceBonusCeiling: number;      // 0.005 = 0.5% max dynamic bonus
   targetCattleAllocation: string;
   riskCategory: 'Low-Medium' | 'Medium' | 'Conservative';
-  illustrativeAnnualRunRateAPY: string; // '18.0% - 24.0% APY (Illustrative Demo)'
+  illustrativeAnnualRunRateAPY: string; // '18.0% - 24.0% APY'
   riskDisclosureText: string;
   lifecycleStatus: PlanLifecycleStatus;
   version: string;

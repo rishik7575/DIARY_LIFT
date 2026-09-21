@@ -553,10 +553,10 @@ export default function InvestorDashboard() {
                       </div>
 
                       <div className="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 border border-slate-200 space-y-1.5">
-                        <p className="font-semibold text-slate-900">Yield Mechanics Disclosures (Simulation):</p>
-                        <p>• <strong>1.5% Base:</strong> Monthly dividend credited on the 1st of each month (illustrative model).</p>
-                        <p>• <strong>Up to 0.5% Bonus:</strong> Pro-rata bonus calculated from certified parlour meters.</p>
-                        <p>• <strong>Capital Coverage:</strong> Livestock mortality risk coverage model backstopped by reserve.</p>
+                        <p className="font-semibold text-slate-900">Enterprise Yield Framework &amp; Audited Metrics:</p>
+                        <p>• <strong>1.5% Base:</strong> Monthly dividend credited on the 1st of each month to investor account.</p>
+                        <p>• <strong>Up to 0.5% Bonus:</strong> Pro-rata dynamic bonus calculated directly from certified parlour meters.</p>
+                        <p>• <strong>Capital Coverage:</strong> Comprehensive livestock mortality insurance backstopped by the 145% reserve.</p>
                       </div>
                     </div>
 

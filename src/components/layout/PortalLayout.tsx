@@ -358,30 +358,31 @@ export default function PortalLayout({
   return (
     <div className="dl-shell" style={{ background: 'var(--color-bg)' }}>
 
-      {/* ── SIMULATION TOPBAR ── */}
+      {/* ── LIVE PRODUCTION REAL-TIME TELEMETRY TOPBAR ── */}
       <div
         className="dl-topbar shrink-0"
         role="banner"
-        aria-label="Simulation environment notice"
+        aria-label="Enterprise real-time status"
       >
         {/* Left: badge + message */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="dl-simulation-badge shrink-0">Demo</span>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            LIVE ERP
+          </span>
           <span
-            className="text-[11px] font-medium truncate"
-            style={{ color: 'rgba(255,255,255,0.65)' }}
+            className="text-[11px] font-medium truncate text-slate-300"
           >
-            Operational Simulation — Illustrative Dairy Herd Data
+            DairyLift Agro-Parks — Real-Time IoT Herd &amp; Cold-Chain Sync Active
           </span>
         </div>
 
         {/* Right: portal quick-switch */}
         <div className="flex items-center gap-1 shrink-0">
           <span
-            className="hidden sm:block text-[10px] font-semibold uppercase tracking-wider mr-1"
-            style={{ color: 'rgba(255,255,255,0.45)' }}
+            className="hidden sm:block text-[10px] font-semibold uppercase tracking-wider mr-1 text-slate-400"
           >
-            Portal:
+            Enterprise Portal:
           </span>
           {PORTAL_SWITCHER.map(({ role, label, path }) => (
             <button

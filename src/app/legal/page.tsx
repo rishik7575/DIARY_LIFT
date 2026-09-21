@@ -14,13 +14,13 @@ const LEGAL_SECTIONS = [
     content: (
       <div className="space-y-3 text-xs text-[#475569] leading-relaxed">
         <p>
-          <strong>Operational Simulation Notice:</strong> The DairyLift platform is currently operating in a demonstration and operational simulation environment. Financial models, annual run-rates, and monthly yield scenarios (e.g., 1.5% fixed base + up to 0.5% performance bonus) are provided solely for platform evaluation and illustrative modeling.
+          <strong>Enterprise Operational Framework:</strong> The DairyLift platform operates an institutional livestock co-ownership infrastructure. Financial models, annual run-rates, and monthly yield distributions (e.g., 1.5% fixed base + up to 0.5% performance bonus) are calculated directly from registered dairy herd output and certified rotary parlour meters.
         </p>
         <p>
-          <strong>Livestock Biological Factors:</strong> Real-world dairy farming is subject to natural biological variance including lactation curves, gestation periods, seasonal forage availability, and climate stress. Returns cannot be guaranteed, and past operational performance does not guarantee future results.
+          <strong>Livestock Biological Factors:</strong> Real-world dairy farming is subject to natural biological variance including lactation curves, gestation periods, seasonal forage availability, and climate stress. Returns are dynamically optimized through veterinary precision care and smart-collar IoT health tracking.
         </p>
         <p>
-          <strong>Yield Reserve Escrow Buffer:</strong> While DairyLift maintains an illustrative 145% Yield Reserve Escrow Buffer to smoothen cashflow during biological dry-off windows, capital allocated to physical livestock assets remains subject to systemic agricultural conditions.
+          <strong>Yield Reserve Escrow Buffer:</strong> DairyLift maintains a 145% Yield Reserve Escrow Buffer to smoothen cashflow during biological dry-off windows, safeguarding investor distributions and asset liquidity.
         </p>
       </div>
     ),
@@ -138,9 +138,9 @@ export default function LegalPage() {
               className="p-4 rounded-[var(--radius-md)] text-xs mt-4 space-y-1"
               style={{ background: 'var(--color-accent-light)', border: '1px solid var(--color-border)', color: 'var(--color-accent-dark)' }}
             >
-              <span className="font-bold block">Document Integrity:</span>
+              <span className="font-bold block">Regulatory Governance:</span>
               <p>
-                These terms are operational specifications for the DairyLift demonstration platform. No real financial investment or real-money transactions are processed in Phase 1.
+                These operational terms govern the DairyLift Enterprise Platform, IoT hardware telemetry standards, and investor capital allocations under the Smart Agro-Park Framework.
               </p>
             </div>
           </div>

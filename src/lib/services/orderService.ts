@@ -6,8 +6,9 @@
 import { OrderFulfillment, DeliveryAddress, DeliverySlotTime, OrderLineItem } from '../types/order';
 import { db, isLiveFirebaseConfigured } from '../firebase/config';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { broadcastRealtimeEvent } from '../realtime/useRealtimeSync';
 
-const INITIAL_DEMO_ORDERS: OrderFulfillment[] = [
+const INITIAL_ENTERPRISE_ORDERS: OrderFulfillment[] = [
   {
     orderId: 'ORD-DL-98412',
     userId: 'usr-consumer-01',
@@ -69,7 +70,7 @@ function loadInitialOrders(): OrderFulfillment[] {
       }
     }
   }
-  return [...INITIAL_DEMO_ORDERS];
+  return [...INITIAL_ENTERPRISE_ORDERS];
 }
 
 let ordersStore: OrderFulfillment[] = loadInitialOrders();
@@ -150,6 +151,7 @@ export const orderService = {
 
     const updatedList = [newOrder, ...ordersStore];
     saveOrdersStore(updatedList);
+    broadcastRealtimeEvent('ORDER_PLACED', newOrder);
 
     if (isLiveFirebaseConfigured()) {
       try {
@@ -227,6 +229,8 @@ export const orderService = {
         console.warn('Firestore updateOrderStatus error:', err);
       }
     }
+
+    broadcastRealtimeEvent('ORDER_UPDATED', updated);
 
     return updated;
   },

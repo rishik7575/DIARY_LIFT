@@ -10,6 +10,7 @@ import {
   BarChart3, Clipboard, ChevronDown, Star
 } from 'lucide-react';
 import { useState } from 'react';
+import { useLiveTelemetry } from '@/lib/realtime/useRealtimeSync';
 
 const PORTAL_CONFIGS = {
   consumer: {
@@ -78,6 +79,7 @@ export default function PortalNavbar() {
   const openCart = useCartStore((s) => s.openCart);
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
+  const telemetry = useLiveTelemetry();
 
   if (!user) return null;
 
@@ -140,6 +142,16 @@ export default function PortalNavbar() {
               </Link>
             )}
           </nav>
+
+          {/* Live Telemetry Stream Indicator */}
+          <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-medium text-emerald-800">
+            <span className={`w-2 h-2 rounded-full ${telemetry.pulseActive ? 'bg-emerald-500' : 'bg-emerald-400'} animate-pulse`} />
+            <span className="font-semibold text-emerald-700">LIVE IOT STREAM</span>
+            <span className="text-emerald-300">|</span>
+            <span className="font-mono text-emerald-700">{telemetry.coolerTemp}°C Cold Chain</span>
+            <span className="text-emerald-300">|</span>
+            <span className="font-mono text-emerald-700">{telemetry.liveLiters.toLocaleString()} L Parlour</span>
+          </div>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">

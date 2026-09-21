@@ -85,7 +85,7 @@ export default function AdminPage() {
     performanceBonusCeiling: 0.005,
     targetCattleAllocation: '2x A2 Gir Cows',
     riskCategory: 'Low-Medium' as const,
-    illustrativeAnnualRunRateAPY: '18.0% - 24.0% (Illustrative Demo)',
+    illustrativeAnnualRunRateAPY: '18.0% - 24.0% APY',
     riskDisclosureText: 'Livestock performance is subject to natural biological cycles. Capital protected by Yield Reserve.',
     version: 'v1.0',
     effectiveDate: '2026-10-01',

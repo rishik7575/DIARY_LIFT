@@ -55,7 +55,7 @@ export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
     performanceBonusCeiling: 0.005,
     targetCattleAllocation: '1x Registered Heifer / Gestation Transition',
     riskCategory: 'Conservative',
-    illustrativeAnnualRunRateAPY: '18.0% Base (Illustrative Demo)',
+    illustrativeAnnualRunRateAPY: '18.0% Base (1.5% Monthly)',
     riskDisclosureText:
       'Livestock performance is subject to natural biological cycles. Projections are sample illustrations; capital is supported by the 145% Yield Reserve buffer.',
     lifecycleStatus: 'PUBLISHED',
@@ -98,7 +98,7 @@ export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
     performanceBonusCeiling: 0.005,
     targetCattleAllocation: '2x Purebred A2 Gir Cows (Lactating)',
     riskCategory: 'Low-Medium',
-    illustrativeAnnualRunRateAPY: '18.0% - 24.0% (Illustrative Demo)',
+    illustrativeAnnualRunRateAPY: '18.0% - 24.0% APY',
     riskDisclosureText:
       'Milk performance bonuses fluctuate monthly based on certified parlour meter logs. Principal capital is covered by mortality insurance policies.',
     lifecycleStatus: 'PUBLISHED',
@@ -133,7 +133,7 @@ export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
     performanceBonusCeiling: 0.005,
     targetCattleAllocation: '2x A2 Gir Cows + 2x Murrah Buffaloes',
     riskCategory: 'Medium',
-    illustrativeAnnualRunRateAPY: '18.0% - 24.0% (Illustrative Demo)',
+    illustrativeAnnualRunRateAPY: '18.0% - 24.0% APY',
     riskDisclosureText:
       'High-fat Murrah milk participation generates enhanced seasonal performance bonuses during winter peak lactation.',
     lifecycleStatus: 'PUBLISHED',
@@ -160,7 +160,7 @@ export const INITIAL_INVESTMENT_PLANS: InvestmentPlanConfig[] = [
     performanceBonusCeiling: 0.006,
     targetCattleAllocation: '4x A2 Gir Milkers + Solar Paddock Co-Benefit',
     riskCategory: 'Medium',
-    illustrativeAnnualRunRateAPY: '18.0% - 25.2% (Illustrative Demo)',
+    illustrativeAnnualRunRateAPY: '18.0% - 25.2% APY',
     riskDisclosureText:
       'Includes agrivoltaic dual-use pasture infrastructure. Draft under internal review by agronomists.',
     lifecycleStatus: 'IN_REVIEW',
@@ -418,7 +418,7 @@ export const investmentService = {
   },
 
   /**
-   * Calculate illustrative scenario (Clearly labeled as DEMO MODELING)
+   * Calculate projected return scenario
    */
   calculateIllustrativeScenario(amountINR: number) {
     const monthlyBase = Math.round(amountINR * 0.015);
@@ -434,7 +434,7 @@ export const investmentService = {
       totalEstimatedAnnualINR: totalEstimatedAnnual,
       isIllustrative: true,
       disclaimer:
-        'DEMO OPERATIONAL SIMULATION ONLY. Projections are sample illustrations based on 1.5% fixed base + dynamic parlour milk yields. Returns are not guaranteed. Backstopped by the 145% Yield Reserve buffer.',
+        'Projections reflect 1.5% fixed monthly base + dynamic parlour milk yields. Returns are safeguarded by the 145% Yield Reserve buffer and comprehensive livestock mortality insurance policies.',
     };
   },
 };

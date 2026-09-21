@@ -7,6 +7,7 @@ import { CattleAsset, BiologicalStatus, CattleHealthCondition } from '../types/c
 import { CATTLE_ASSETS } from '../mockData/cattle';
 import { db, isLiveFirebaseConfigured } from '../firebase/config';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { broadcastRealtimeEvent } from '../realtime/useRealtimeSync';
 
 function loadInitialCattle(): CattleAsset[] {
   if (typeof window !== 'undefined') {
@@ -118,6 +119,7 @@ export const cattleService = {
 
     const updatedList = [created, ...cattleStore];
     saveCattleStore(updatedList);
+    broadcastRealtimeEvent('CATTLE_UPDATED', created);
 
     if (isLiveFirebaseConfigured()) {
       try {
@@ -153,6 +155,7 @@ export const cattleService = {
     const updatedList = [...cattleStore];
     updatedList[index] = updatedRecord;
     saveCattleStore(updatedList);
+    broadcastRealtimeEvent('CATTLE_UPDATED', updatedRecord);
 
     if (isLiveFirebaseConfigured()) {
       try {

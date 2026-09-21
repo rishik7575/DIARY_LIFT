@@ -7,6 +7,7 @@ import { DailyMilkLogRecord, BatchApprovalStatus } from '../types/farm';
 import { DAILY_MILK_LOGS } from '../mockData/farm';
 import { db, isLiveFirebaseConfigured } from '../firebase/config';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+import { broadcastRealtimeEvent } from '../realtime/useRealtimeSync';
 
 function loadInitialMilkLogs(): DailyMilkLogRecord[] {
   if (typeof window !== 'undefined') {
@@ -112,6 +113,7 @@ export const milkProductionService = {
       const clone = [...milkLogsStore];
       clone[existingLogIndex] = updatedRecord;
       saveMilkLogsStore(clone);
+      broadcastRealtimeEvent('MILKING_LOGGED', updatedRecord);
 
       if (isLiveFirebaseConfigured()) {
         try {
@@ -165,6 +167,7 @@ export const milkProductionService = {
 
     const clone = [newRecord, ...milkLogsStore];
     saveMilkLogsStore(clone);
+    broadcastRealtimeEvent('MILKING_LOGGED', newRecord);
 
     if (isLiveFirebaseConfigured()) {
       try {

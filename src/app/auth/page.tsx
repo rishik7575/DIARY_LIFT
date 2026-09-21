@@ -297,7 +297,7 @@ export default function AuthGatewayPage() {
                   <label className="text-xs font-medium text-slate-300">Password</label>
                   {mode === 'login' && (
                     <span className="text-[11px] text-slate-400 font-mono">
-                      (Demo pass: <code className="text-emerald-400">123</code>)
+                      (Default access pass: <code className="text-emerald-400">123</code>)
                     </span>
                   )}
                 </div>
@@ -373,14 +373,14 @@ export default function AuthGatewayPage() {
               )}
             </div>
 
-            {/* Quick Demo Credentials Autofill Tray */}
+            {/* Enterprise Credentials Autofill Tray */}
             <div className="mt-6 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
               <div className="flex items-center justify-between mb-2.5">
                 <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
                   <Layers className="w-3 h-3 text-emerald-400" />
-                  Quick-Fill Verified Test Accounts
+                  Enterprise Role Directory
                 </span>
-                <span className="text-[10px] text-slate-500 font-mono">DB Auto-Routed</span>
+                <span className="text-[10px] text-emerald-400 font-mono">Auto-Routing Enabled</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {QUICK_DEMO_ACCOUNTS.map((acc) => (

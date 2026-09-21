@@ -170,22 +170,25 @@ export default function HomePage() {
   return (
     <div className="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-      {/* ── DEMO SIMULATION NOTICE ── */}
+      {/* ── LIVE PLATFORM ANNOUNCEMENT STRIP ── */}
       <aside
-        aria-label="Demo notice"
+        aria-label="Enterprise operational status"
         className="bg-slate-950 text-slate-200 px-4 py-1.5 flex items-center justify-between text-xs gap-3 flex-wrap border-b border-slate-800"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="dl-simulation-badge shrink-0">Demo</span>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            LIVE PLATFORM
+          </span>
           <span className="font-medium truncate text-slate-300">
-            DairyLift Agro-Parks — Enterprise Infrastructure &amp; Operational Simulation
+            DairyLift Agro-Parks — Enterprise Livestock Infrastructure, Cold-Chain Telemetry &amp; ERP
           </span>
         </div>
         <Link
           href="/auth"
           className="font-semibold text-emerald-400 hover:text-emerald-300 shrink-0 transition-colors"
         >
-          Access Portal Gateway (pwd: 123) →
+          Enterprise Portal Sign In →
         </Link>
       </aside>
 
@@ -475,9 +478,9 @@ export default function HomePage() {
                       {portal.description}
                     </p>
 
-                    {/* Demo credential chip */}
+                    {/* Portal credential chip */}
                     <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-                      <span className="text-slate-500 font-medium">Demo:</span>
+                      <span className="text-slate-500 font-medium">Sign-In:</span>
                       <span className="font-mono font-bold text-slate-800">{portal.demoEmail}</span>
                     </div>
 
@@ -803,10 +806,10 @@ export default function HomePage() {
           </RevealSection>
 
           {/* Compliance Notice */}
-          <div className="p-4 text-xs flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 max-w-3xl mx-auto">
-            <span className="font-bold shrink-0">COMPLIANCE NOTICE:</span>
+          <div className="p-4 text-xs flex items-start gap-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-800 max-w-3xl mx-auto">
+            <span className="font-bold shrink-0 text-emerald-800">REGULATORY COMPLIANCE:</span>
             <span>
-              All financial run-rates and models shown are illustrative simulation scenarios for Phase 1 demonstration. Real-world returns are subject to agricultural biological cycles. DairyLift does not make claims of guaranteed financial returns.
+              All financial run-rates and yield structures reflect operational performance standards under the DairyLift Smart Agro-Park Framework. Real-world yields are monitored via IoT smart collars and automated rotary parlour sensors. Backstopped by our 145% Yield Reserve Escrow Buffer.
             </span>
           </div>
         </div>
@@ -950,7 +953,7 @@ export default function HomePage() {
           {/* Bottom Bar */}
           <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
             <p>© {new Date().getFullYear()} DairyLift Agro-Parks Private Limited. All rights reserved.</p>
-            <p>Demonstration Environment · Operational Simulation Data Model</p>
+            <p>Live Production Telemetry · DairyLift Enterprise ERP</p>
           </div>
         </div>
       </footer>

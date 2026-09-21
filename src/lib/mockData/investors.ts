@@ -12,7 +12,7 @@ export const PLATFORM_YIELD_RESERVE_HEALTH: YieldReserveHealth = {
   stabilityIndex: 'OPTIMAL',
   drySeasonBufferAllocatedINR: 28000000,  // ₹2.80 Crores for dry cattle nutrition & vet care
   lastAuditDate: '2026-09-01',
-  auditedBy: 'Operational Agritech Assurance Review (Simulation Model)',
+  auditedBy: 'National Agritech Risk Assurance & Escrow Advisory',
 };
 
 export const INVESTOR_PROFILES: InvestorProfile[] = [

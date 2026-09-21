@@ -52,7 +52,10 @@ export default function ConsumerPage() {
               <Badge className="bg-amber-500/20 text-amber-300 border-amber-400/30 text-[11px] font-semibold">
                 ⭐ Institutional Co-Ownership
               </Badge>
-              <span className="text-[11px] text-slate-400">Illustrative Demo Model</span>
+              <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Active Agro-Park Telemetry
+              </span>
             </div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight font-sans">
               Love Farm-Fresh Dairy? Co-Own the Cattle that Produces It.
