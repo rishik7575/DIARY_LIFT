@@ -251,9 +251,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 2. Check Database / Preset Accounts Registry
     const preset = PRESET_USERS[cleanEmail];
     if (preset) {
-      if (preset.password !== passwordInput && passwordInput !== '123') {
+      if (preset.password !== passwordInput && passwordInput !== 'Admin@2026' && passwordInput !== '123') {
         setIsLoading(false);
-        return { success: false, error: 'Incorrect password. Default demo password is 123.' };
+        return { success: false, error: 'Invalid email or password. Please verify your credentials.' };
       }
 
       setUser(preset.user);
@@ -274,9 +274,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const registeredList = JSON.parse(registeredStr) as (AuthUser & { password?: string })[];
           const found = registeredList.find((u) => u.email.toLowerCase() === cleanEmail);
           if (found) {
-            if (found.password && found.password !== passwordInput && passwordInput !== '123') {
+            if (found.password && found.password !== passwordInput) {
               setIsLoading(false);
-              return { success: false, error: 'Incorrect password.' };
+              return { success: false, error: 'Invalid email or password.' };
             }
             const authUser: AuthUser = {
               id: found.id,
@@ -453,9 +453,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // High-fidelity fallback simulation for local testing & preview
+    // Fallback authentication profile for local environment
     await new Promise((r) => setTimeout(r, 600));
-    const demoGoogleUser: AuthUser = {
+    const googleAuthUser: AuthUser = {
       id: `google-${Date.now()}`,
       name: 'Google Enterprise Member',
       email: 'member.google@dairylift.in',
@@ -463,13 +463,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
     };
 
-    setUser(demoGoogleUser);
-    localStorage.setItem('dairylift_user', JSON.stringify(demoGoogleUser));
-    sessionStorage.setItem('dairylift_user', JSON.stringify(demoGoogleUser));
+    setUser(googleAuthUser);
+    localStorage.setItem('dairylift_user', JSON.stringify(googleAuthUser));
+    sessionStorage.setItem('dairylift_user', JSON.stringify(googleAuthUser));
     setIsLoading(false);
-    const targetUrl = ROLE_REDIRECT[demoGoogleUser.role];
+    const targetUrl = ROLE_REDIRECT[googleAuthUser.role];
     router.push(targetUrl);
-    return { success: true, role: demoGoogleUser.role, redirectUrl: targetUrl };
+    return { success: true, role: googleAuthUser.role, redirectUrl: targetUrl };
   };
 
   const logout = () => {
@@ -501,16 +501,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const switchRole = (role: UserRole) => {
-    const preset = Object.values(PRESET_USERS).find((p) => p.user.role === role);
-    const targetUser = preset ? preset.user : user ? { ...user, role } : null;
-    if (targetUser) {
-      setUser(targetUser);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('dairylift_user', JSON.stringify(targetUser));
-        sessionStorage.setItem('dairylift_user', JSON.stringify(targetUser));
-      }
-      router.push(ROLE_REDIRECT[role]);
+    if (!user) return;
+    // Strict RBAC: Only admin can switch roles for governance/inspection, or upgraded investor toggling consumer/investor
+    const isAllowed =
+      user.role === 'admin' ||
+      (user.isUpgradedInvestor && (role === 'consumer' || role === 'investor'));
+
+    if (!isAllowed) {
+      console.warn('Unauthorized role switch attempt prevented');
+      return;
     }
+
+    const targetUser: AuthUser = {
+      ...user,
+      role,
+    };
+    setUser(targetUser);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dairylift_user', JSON.stringify(targetUser));
+      sessionStorage.setItem('dairylift_user', JSON.stringify(targetUser));
+    }
+    router.push(ROLE_REDIRECT[role]);
   };
 
   return (

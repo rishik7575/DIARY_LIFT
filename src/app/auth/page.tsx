@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/lib/auth/AuthContext';
+import { useAuth, UserRole } from '@/lib/auth/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,68 +21,24 @@ import {
   EyeOff,
   Sparkles,
   Activity,
-  Layers,
+  Briefcase,
+  ShoppingCart,
 } from 'lucide-react';
-
-interface QuickAccount {
-  email: string;
-  name: string;
-  expectedPortal: string;
-  roleDescription: string;
-  icon: string;
-}
-
-const QUICK_DEMO_ACCOUNTS: QuickAccount[] = [
-  {
-    email: 'admin@dairylift.in',
-    name: 'Vikramaditya Singhania',
-    expectedPortal: 'Master Admin (/admin)',
-    roleDescription: 'Executive supply chain & financial ERP',
-    icon: '🛡️',
-  },
-  {
-    email: 'rajesh.deshmukh@dairylift.in',
-    name: 'Dr. Rajesh Deshmukh',
-    expectedPortal: 'Farm Staff (/staff)',
-    roleDescription: 'AM/PM milking parlour logs & veterinary telemetry',
-    icon: '📋',
-  },
-  {
-    email: 'arjun.mehta@mumbaicapital.com',
-    name: 'Arjun Mehta',
-    expectedPortal: 'Investor Suite (/investor)',
-    roleDescription: '1.5% base yield ledger & live cattle telemetry',
-    icon: '📈',
-  },
-  {
-    email: 'ananya.sharma@gmail.com',
-    name: 'Ananya Sharma',
-    expectedPortal: 'Consumer Store (/consumer)',
-    roleDescription: 'Sub-15 min cold-chain A2 dairy quick-commerce',
-    icon: '🛒',
-  },
-];
 
 export default function AuthGatewayPage() {
   const { login, loginWithGoogle, signup } = useAuth();
   const router = useRouter();
 
   const [mode, setMode] = useState<'login' | 'signup'>('login');
-  const [email, setEmail] = useState('admin@dairylift.in');
-  const [password, setPassword] = useState('123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [signupRole, setSignupRole] = useState<UserRole>('consumer');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successInfo, setSuccessInfo] = useState<string | null>(null);
-
-  const handleQuickFill = (acc: QuickAccount) => {
-    setEmail(acc.email);
-    setPassword('123');
-    setErrorMsg(null);
-    setSuccessInfo(`Selected ${acc.name} — role resolves dynamically from database.`);
-  };
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -94,7 +50,7 @@ export default function AuthGatewayPage() {
       router.push(res.redirectUrl);
     } else {
       setGoogleLoading(false);
-      setErrorMsg(res.error || 'Google authentication failed.');
+      setErrorMsg(res.error || 'Google authentication failed. Please try again or use email sign-in.');
     }
   };
 
@@ -116,12 +72,17 @@ export default function AuthGatewayPage() {
     } else {
       if (!fullName.trim()) {
         setLoading(false);
-        setErrorMsg('Please enter your full name to create an account.');
+        setErrorMsg('Please enter your full legal name to create an account.');
         return;
       }
-      const res = await signup(fullName, email, password, 'consumer');
+      if (password.length < 6) {
+        setLoading(false);
+        setErrorMsg('Password must be at least 6 characters long.');
+        return;
+      }
+      const res = await signup(fullName, email, password, signupRole);
       if (res.success && res.redirectUrl) {
-        setSuccessInfo('Account created successfully in Firestore! Redirecting to portal...');
+        setSuccessInfo('Account created successfully! Opening your authorized portal...');
         router.push(res.redirectUrl);
       } else {
         setLoading(false);
@@ -145,7 +106,7 @@ export default function AuthGatewayPage() {
           <div>
             <span className="font-extrabold text-lg tracking-tight">DairyLift</span>
             <span className="text-[10px] block text-emerald-400 font-mono tracking-widest uppercase -mt-0.5">
-              Enterprise ERP
+              Enterprise Portal
             </span>
           </div>
         </Link>
@@ -153,7 +114,7 @@ export default function AuthGatewayPage() {
         <div className="flex items-center gap-3">
           <Badge className="bg-white/5 text-slate-300 border-white/10 text-xs hidden sm:flex items-center gap-1.5 py-1 px-3">
             <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            RBAC Telemetry Active
+            Active RBAC Session Guard
           </Badge>
           <Link
             href="/"
@@ -167,22 +128,22 @@ export default function AuthGatewayPage() {
 
       {/* Main Authentication Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 z-10 my-4">
-        <div className="w-full max-w-lg">
+        <div className="w-full max-w-md">
           {/* Card Frame */}
-          <div className="bg-[#0B132B]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-black/80 relative">
+          <div className="bg-[#0B132B]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-black/80 relative">
             {/* Header */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
                 <Sparkles className="w-3.5 h-3.5" />
-                Universal Enterprise Single Sign-On
+                Authorized Single Sign-On
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                {mode === 'login' ? 'Sign In to DairyLift' : 'Register Enterprise Access'}
+                {mode === 'login' ? 'Sign In to DairyLift' : 'Create Member Account'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-sm mx-auto leading-relaxed">
                 {mode === 'login'
-                  ? 'Sign in via Google or enter your registered corporate email to auto-resolve your authorized portal.'
-                  : 'Create your DairyLift member account. You will be provisioned access to consumer quick-commerce and can apply for investor allocation.'}
+                  ? 'Sign in with your Google account or registered enterprise credentials to access your portal.'
+                  : 'Register a new account to access our farm-to-table dairy store or livestock co-ownership suite.'}
               </p>
             </div>
 
@@ -247,37 +208,64 @@ export default function AuthGatewayPage() {
               <div className="border-t border-white/10 w-full" />
             </div>
 
-            {successInfo && (
-              <div className="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-                <span>{successInfo}</span>
-              </div>
-            )}
-
             {/* Auth Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                    Full Legal / Corporate Name
-                  </label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <Input
-                      type="text"
-                      placeholder="e.g. Ramesh Kulkarni"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="bg-white/5 border-white/10 pl-10 text-white placeholder:text-slate-500 rounded-xl h-11 focus-visible:ring-[#15803D]"
-                      required
-                    />
+                <>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                      Full Legal Name
+                    </label>
+                    <div className="relative">
+                      <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Input
+                        type="text"
+                        placeholder="e.g. Ramesh Kulkarni"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="bg-white/5 border-white/10 pl-10 text-white placeholder:text-slate-500 rounded-xl h-11 focus-visible:ring-[#15803D]"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                      Account Type
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSignupRole('consumer')}
+                        className={`p-2.5 rounded-xl border text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                          signupRole === 'consumer'
+                            ? 'bg-emerald-600/20 border-emerald-500 text-emerald-300'
+                            : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        Customer Store
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSignupRole('investor')}
+                        className={`p-2.5 rounded-xl border text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                          signupRole === 'investor'
+                            ? 'bg-amber-600/20 border-amber-500 text-amber-300'
+                            : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        <Briefcase className="w-3.5 h-3.5" />
+                        Cattle Co-Owner
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
 
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Corporate / Registered Email
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -293,14 +281,9 @@ export default function AuthGatewayPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-slate-300">Password</label>
-                  {mode === 'login' && (
-                    <span className="text-[11px] text-slate-400 font-mono">
-                      (Default access pass: <code className="text-emerald-400">123</code>)
-                    </span>
-                  )}
-                </div>
+                <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  Password
+                </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <Input
@@ -324,16 +307,16 @@ export default function AuthGatewayPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#15803D] hover:bg-[#166534] text-white font-semibold h-11 rounded-xl shadow-lg shadow-[#15803D]/25 mt-2 transition-all"
+                className="w-full bg-[#15803D] hover:bg-[#166534] text-white font-semibold h-11 rounded-xl shadow-lg shadow-[#15803D]/25 mt-2 transition-all cursor-pointer"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    Querying RBAC Profile...
+                    Authenticating...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    {mode === 'login' ? 'Authenticate & Open Portal' : 'Create Member Account'}
+                    {mode === 'login' ? 'Sign In & Open Portal' : 'Create Account & Sign In'}
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 )}
@@ -344,14 +327,14 @@ export default function AuthGatewayPage() {
             <div className="mt-6 pt-5 border-t border-white/10 text-center text-xs text-slate-400">
               {mode === 'login' ? (
                 <>
-                  New to DairyLift?{' '}
+                  Don&apos;t have an account?{' '}
                   <button
                     onClick={() => {
                       setMode('signup');
                       setErrorMsg(null);
                       setSuccessInfo(null);
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 font-semibold underline underline-offset-2 ml-1"
+                    className="text-emerald-400 hover:text-emerald-300 font-semibold underline underline-offset-2 ml-1 cursor-pointer"
                   >
                     Create an account
                   </button>
@@ -365,49 +348,12 @@ export default function AuthGatewayPage() {
                       setErrorMsg(null);
                       setSuccessInfo(null);
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 font-semibold underline underline-offset-2 ml-1"
+                    className="text-emerald-400 hover:text-emerald-300 font-semibold underline underline-offset-2 ml-1 cursor-pointer"
                   >
                     Sign in to your portal
                   </button>
                 </>
               )}
-            </div>
-
-            {/* Enterprise Credentials Autofill Tray */}
-            <div className="mt-6 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase flex items-center gap-1.5">
-                  <Layers className="w-3 h-3 text-emerald-400" />
-                  Enterprise Role Directory
-                </span>
-                <span className="text-[10px] text-emerald-400 font-mono">Auto-Routing Enabled</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {QUICK_DEMO_ACCOUNTS.map((acc) => (
-                  <button
-                    key={acc.email}
-                    type="button"
-                    onClick={() => handleQuickFill(acc)}
-                    className="text-left p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/5 hover:border-emerald-500/30 transition-all group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-white flex items-center gap-1.5">
-                        <span>{acc.icon}</span>
-                        <span className="truncate">{acc.name}</span>
-                      </span>
-                      <span className="text-[10px] text-emerald-400 font-mono group-hover:translate-x-0.5 transition-transform">
-                        Fill →
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-slate-400 font-mono truncate mt-0.5">
-                      {acc.email}
-                    </div>
-                    <div className="text-[10px] text-slate-500 truncate mt-0.5">
-                      Routes to: <span className="text-slate-300 font-medium">{acc.expectedPortal}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -417,10 +363,10 @@ export default function AuthGatewayPage() {
       <footer className="px-6 py-4 border-t border-white/5 text-center text-xs text-slate-500 z-10 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          <span>256-Bit Encrypted Session • Role-Based Firestore Access Rules Enforced</span>
+          <span>256-Bit Encrypted Session • Enterprise RBAC Authorization</span>
         </div>
         <div>
-          <span className="text-slate-400">DairyLift Enterprise ERP v2.0</span> • All rights reserved
+          <span className="text-slate-400">DairyLift Enterprise ERP</span> • Production Mode Active
         </div>
       </footer>
     </div>

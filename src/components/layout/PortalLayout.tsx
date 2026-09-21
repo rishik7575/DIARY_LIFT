@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth, UserRole } from '@/lib/auth/AuthContext';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { notificationService } from '@/lib/services/notificationService';
 import NotificationCenter from '@/components/layout/NotificationCenter';
 import {
@@ -93,13 +92,6 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-const PORTAL_SWITCHER: { role: UserRole; label: string; path: string }[] = [
-  { role: 'admin',    label: 'Admin',    path: '/admin' },
-  { role: 'staff',    label: 'Staff',    path: '/staff' },
-  { role: 'investor', label: 'Investor', path: '/investor' },
-  { role: 'consumer', label: 'Store',    path: '/consumer' },
-];
-
 /* ──────────────────────────────────────────────────────────── */
 /*  HELPERS                                                    */
 /* ──────────────────────────────────────────────────────────── */
@@ -181,10 +173,9 @@ export default function PortalLayout({
   children: React.ReactNode;
   allowedRoles?: UserRole[];
 }) {
-  const { user, switchRole, logout } = useAuth();
+  const { user, logout } = useAuth();
   const currentRole: UserRole = user?.role || 'consumer';
   const pathname  = usePathname();
-  const router    = useRouter();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -211,11 +202,6 @@ export default function PortalLayout({
     const interval = setInterval(load, 15_000);
     return () => { mounted = false; clearInterval(interval); };
   }, []);
-
-  const handlePortalSwitch = (role: UserRole, path: string) => {
-    switchRole(role);
-    router.push(path);
-  };
 
   const breadcrumbs = getBreadcrumbs(pathname);
   const userInitial = user?.name ? user.name[0].toUpperCase() : 'U';
@@ -358,50 +344,6 @@ export default function PortalLayout({
   return (
     <div className="dl-shell" style={{ background: 'var(--color-bg)' }}>
 
-      {/* ── LIVE PRODUCTION REAL-TIME TELEMETRY TOPBAR ── */}
-      <div
-        className="dl-topbar shrink-0"
-        role="banner"
-        aria-label="Enterprise real-time status"
-      >
-        {/* Left: badge + message */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            LIVE ERP
-          </span>
-          <span
-            className="text-[11px] font-medium truncate text-slate-300"
-          >
-            DairyLift Agro-Parks — Real-Time IoT Herd &amp; Cold-Chain Sync Active
-          </span>
-        </div>
-
-        {/* Right: portal quick-switch */}
-        <div className="flex items-center gap-1 shrink-0">
-          <span
-            className="hidden sm:block text-[10px] font-semibold uppercase tracking-wider mr-1 text-slate-400"
-          >
-            Enterprise Portal:
-          </span>
-          {PORTAL_SWITCHER.map(({ role, label, path }) => (
-            <button
-              key={role}
-              onClick={() => handlePortalSwitch(role, path)}
-              className={cn(
-                'px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer',
-                currentRole === role
-                  ? 'text-white'
-                  : 'text-white/50 hover:text-white/80'
-              )}
-              style={currentRole === role ? { background: 'var(--color-brand)' } : {}}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* ── BODY (sidebar + main) ── */}
       <div className="dl-shell-body">
 
@@ -454,7 +396,15 @@ export default function PortalLayout({
             </div>
 
             {/* Right actions */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-2.5 ml-auto">
+              {/* Telemetry Status */}
+              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-medium text-emerald-800">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-semibold text-emerald-700">IoT LIVE</span>
+                <span className="text-emerald-300">|</span>
+                <span className="font-mono text-emerald-700">3.4°C Chiller</span>
+              </div>
+
               {/* Notifications */}
               <button
                 onClick={() => setNotifOpen(true)}
@@ -473,13 +423,28 @@ export default function PortalLayout({
                 )}
               </button>
 
-              {/* Role gateway */}
-              <Link href="/auth" className="hidden md:block">
-                <Button variant="outline" size="sm">
-                  <Users className="w-3.5 h-3.5" />
-                  <span>Switch Role</span>
-                </Button>
-              </Link>
+              {/* Verified User Profile & Secure Sign Out */}
+              <div className="flex items-center gap-2 pl-2 border-l border-[var(--color-border)]">
+                <div className="w-8 h-8 rounded-lg bg-emerald-700 text-white font-bold flex items-center justify-center text-xs shadow-xs">
+                  {userInitial}
+                </div>
+                <div className="hidden lg:block text-left text-xs leading-tight">
+                  <p className="font-semibold text-[var(--color-text-primary)] truncate max-w-[130px]">
+                    {user?.name || 'Authorized Member'}
+                  </p>
+                  <p className="text-[10px] text-emerald-700 font-medium capitalize">
+                    {user?.role ? `${user.role} Portal` : 'Portal'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => logout()}
+                  title="Sign Out"
+                  className="p-1.5 rounded-[var(--radius-md)] text-[var(--color-text-secondary)] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                  aria-label="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </header>
 

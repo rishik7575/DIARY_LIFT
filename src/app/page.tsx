@@ -56,7 +56,6 @@ const PORTALS = [
     title: 'Executive ERP',
     number: '01',
     description: 'Multi-facility operations, environmental threshold rules, investment plan versioning, and catalog pricing control.',
-    demoEmail: 'admin@gmail.com',
     bullets: [
       'IoT climate threshold triggers (32.4°C breach)',
       'Plan lifecycle: Draft → Review → Publish',
@@ -74,7 +73,6 @@ const PORTALS = [
     title: 'Farm Staff ERP',
     number: '02',
     description: 'Milking parlour meter logging, IoT mitigation action workflows, and veterinary health tracking.',
-    demoEmail: 'staff@gmail.com',
     bullets: [
       'Shift AM/PM parlour milk entry with fat/SNF scoring',
       'Action Center: Misting & ventilation mitigation',
@@ -92,7 +90,6 @@ const PORTALS = [
     title: 'Investor Suite',
     number: '03',
     description: 'Institutional asset transparency, 1.5% fixed base yield modeling, Yield Reserve health, and live cattle RFID telemetry.',
-    demoEmail: 'investor@gmail.com',
     bullets: [
       'Verifiable NEFT dividend credit history',
       '145% Yield Reserve Escrow liquidity gauge',
@@ -110,7 +107,6 @@ const PORTALS = [
     title: 'Consumer Store',
     number: '04',
     description: 'Farm-fresh A2 milk, Vedic bilona ghee, and cultured paneer delivered in sub-15 minutes in cold-chain crates.',
-    demoEmail: 'rishik@gmail.com',
     bullets: [
       'Live pricing & inventory sync with Admin ERP',
       'Slide-over cart drawer with delivery slot picker',
@@ -170,28 +166,6 @@ export default function HomePage() {
   return (
     <div className="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-      {/* ── LIVE PLATFORM ANNOUNCEMENT STRIP ── */}
-      <aside
-        aria-label="Enterprise operational status"
-        className="bg-slate-950 text-slate-200 px-4 py-1.5 flex items-center justify-between text-xs gap-3 flex-wrap border-b border-slate-800"
-      >
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            LIVE PLATFORM
-          </span>
-          <span className="font-medium truncate text-slate-300">
-            DairyLift Agro-Parks — Enterprise Livestock Infrastructure, Cold-Chain Telemetry &amp; ERP
-          </span>
-        </div>
-        <Link
-          href="/auth"
-          className="font-semibold text-emerald-400 hover:text-emerald-300 shrink-0 transition-colors"
-        >
-          Enterprise Portal Sign In →
-        </Link>
-      </aside>
-
       {/* ── NAVIGATION HEADER ── */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
         <div className="dl-container flex items-center justify-between h-16 gap-4">
@@ -229,7 +203,7 @@ export default function HomePage() {
             </Link>
             <Link href="/auth">
               <Button variant="primary" size="sm" className="gap-1.5 text-xs font-semibold">
-                Launch Portals <ChevronRight className="w-3.5 h-3.5" />
+                Sign In <ChevronRight className="w-3.5 h-3.5" />
               </Button>
             </Link>
             {/* Mobile Hamburger Toggle */}
@@ -277,14 +251,13 @@ export default function HomePage() {
                 Co-Ownership
               </a>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-slate-500">Quick Portals:</span>
-              <div className="flex gap-2 font-mono">
-                <Link href="/admin" className="text-emerald-600 font-bold hover:underline">Admin</Link>
-                <Link href="/staff" className="text-emerald-600 font-bold hover:underline">Staff</Link>
-                <Link href="/investor" className="text-emerald-600 font-bold hover:underline">Investor</Link>
-                <Link href="/consumer" className="text-emerald-600 font-bold hover:underline">Store</Link>
-              </div>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="text-emerald-700 font-bold hover:underline">
+                Portal Sign In →
+              </Link>
+              <Link href="/consumer" onClick={() => setMobileMenuOpen(false)} className="text-slate-600 font-medium hover:underline">
+                Store Catalog
+              </Link>
             </div>
           </div>
         )}
@@ -313,35 +286,8 @@ export default function HomePage() {
               DairyLift bridges rural livestock infrastructure with urban capital and direct consumer commerce. Smart-collar IoT telemetry, automated rotary milking, and transparent livestock co-ownership.
             </p>
 
-            {/* Quick Demo Portals Gateway Bar */}
-            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  Quick Portals
-                </span>
-                <span className="text-xs text-slate-400">
-                  (password: <code className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-800 font-mono font-bold">123</code>)
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <Link href="/admin" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
-                  Admin
-                </Link>
-                <Link href="/staff" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
-                  Staff
-                </Link>
-                <Link href="/investor" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
-                  Investor
-                </Link>
-                <Link href="/consumer" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
-                  Consumer
-                </Link>
-              </div>
-            </div>
-
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link href="/consumer/invest">
                 <Button variant="primary" size="lg" className="font-semibold shadow-sm gap-2">
                   <TrendingUp className="w-4 h-4 text-amber-300" />
@@ -474,15 +420,9 @@ export default function HomePage() {
                       {portal.title}
                     </h3>
 
-                    <p className="text-xs leading-relaxed mb-3 text-slate-600 flex-1">
+                    <p className="text-xs leading-relaxed mb-4 text-slate-600 flex-1">
                       {portal.description}
                     </p>
-
-                    {/* Portal credential chip */}
-                    <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-                      <span className="text-slate-500 font-medium">Sign-In:</span>
-                      <span className="font-mono font-bold text-slate-800">{portal.demoEmail}</span>
-                    </div>
 
                     <ul className="space-y-1.5 mb-4">
                       {portal.bullets.map((b) => (
