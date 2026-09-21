@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import {
   Milk, ShieldCheck, TrendingUp, Activity, Layers,
   Thermometer, Award, ChevronRight, CheckCircle2,
@@ -55,6 +56,7 @@ const PORTALS = [
     title: 'Executive ERP',
     number: '01',
     description: 'Multi-facility operations, environmental threshold rules, investment plan versioning, and pricing control.',
+    demoEmail: 'admin@gmail.com',
     bullets: [
       'IoT climate threshold triggers (32.4°C breach)',
       'Plan lifecycle: Draft → Review → Publish',
@@ -62,8 +64,8 @@ const PORTALS = [
     ],
     href: '/admin',
     cta: 'Open Admin Command',
-    accentColor: 'var(--color-brand)',
-    accentBg: 'var(--color-brand-light)',
+    accentColor: '#059669',
+    accentBg: '#ECFDF5',
   },
   {
     icon: ClipboardList,
@@ -72,6 +74,7 @@ const PORTALS = [
     title: 'Farm Staff ERP',
     number: '02',
     description: 'Milking parlour meter logging, IoT mitigation action workflows, and veterinary health tracking.',
+    demoEmail: 'staff@gmail.com',
     bullets: [
       'Shift AM/PM parlour milk entry with fat/SNF scoring',
       'Action Center: Misting & ventilation mitigation',
@@ -79,8 +82,8 @@ const PORTALS = [
     ],
     href: '/staff',
     cta: 'Open Staff ERP',
-    accentColor: 'var(--color-brand)',
-    accentBg: 'var(--color-brand-light)',
+    accentColor: '#059669',
+    accentBg: '#ECFDF5',
   },
   {
     icon: TrendingUp,
@@ -89,6 +92,7 @@ const PORTALS = [
     title: 'Investor Suite',
     number: '03',
     description: 'Institutional asset transparency, 1.5% fixed base yield modeling, Yield Reserve health, and live cattle RFID telemetry.',
+    demoEmail: 'investor@gmail.com',
     bullets: [
       'Verifiable NEFT dividend credit history',
       '145% Yield Reserve Escrow liquidity gauge',
@@ -96,8 +100,8 @@ const PORTALS = [
     ],
     href: '/investor',
     cta: 'Open Investor Suite',
-    accentColor: 'var(--color-accent)',
-    accentBg: 'var(--color-accent-light)',
+    accentColor: '#D97706',
+    accentBg: '#FEF3C7',
   },
   {
     icon: ShoppingCart,
@@ -106,6 +110,7 @@ const PORTALS = [
     title: 'Consumer Store',
     number: '04',
     description: 'Farm-fresh A2 milk, Vedic bilona ghee, and cultured paneer delivered in sub-15 minutes in cold-chain crates.',
+    demoEmail: 'rishik@gmail.com',
     bullets: [
       'Live pricing & inventory sync with Admin ERP',
       'Slide-over cart drawer with delivery slot picker',
@@ -113,15 +118,36 @@ const PORTALS = [
     ],
     href: '/consumer',
     cta: 'Open Consumer Store',
-    accentColor: 'var(--color-info)',
-    accentBg: 'var(--color-info-bg)',
+    accentColor: '#3B82F6',
+    accentBg: '#EFF6FF',
   },
 ];
 
 const PRODUCTS_PREVIEW = [
-  { name: 'Raw A2 Gir Cow Milk', note: 'Whole, non-homogenized, 4.6% fat', price: '₹92 / L', status: 'In Stock • AM Batch', statusColor: 'var(--color-success)' },
-  { name: 'Vedic Bilona Ghee', note: 'Slow-cooked curd-churned golden elixir', price: '₹1,450 / 500ml', status: 'Hand-Crafted Earthen Pot', statusColor: 'var(--color-accent)' },
-  { name: 'Artisanal Malai Paneer', note: 'Citrus-curdled fresh cottage cheese', price: '₹185 / 200g', status: 'Vacuum Sealed', statusColor: 'var(--color-success)' },
+  {
+    name: 'Raw A2 Gir Cow Milk',
+    image: '/images/product_a2_milk.jpg',
+    note: 'Whole, non-homogenized, 4.6% fat',
+    price: '₹92 / L',
+    status: 'In Stock • AM Batch',
+    statusColor: '#10B981',
+  },
+  {
+    name: 'Vedic Bilona Ghee',
+    image: '/images/product_ghee.jpg',
+    note: 'Slow-cooked curd-churned golden elixir',
+    price: '₹1,450 / 500ml',
+    status: 'Hand-Crafted Earthen Pot',
+    statusColor: '#D97706',
+  },
+  {
+    name: 'Artisanal Malai Paneer',
+    image: '/images/product_paneer.jpg',
+    note: 'Citrus-curdled fresh cottage cheese',
+    price: '₹185 / 200g',
+    status: 'Vacuum Sealed',
+    statusColor: '#10B981',
+  },
 ];
 
 export default function HomePage() {
@@ -231,26 +257,43 @@ export default function HomePage() {
             </div>
 
             <h1
-              className="font-bold leading-tight tracking-tight"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'var(--text-hero)',
-                color: 'var(--color-text-primary)',
-              }}
+              className="font-bold tracking-tight text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-[1.15]"
             >
               Where Precision Agritech Meets Dairy Wealth.
             </h1>
 
             <p
-              className="leading-relaxed"
-              style={{
-                fontSize: 'var(--text-lg)',
-                color: 'var(--color-text-secondary)',
-                maxWidth: '520px',
-              }}
+              className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg"
             >
               DairyLift bridges rural livestock infrastructure with urban capital and direct consumer commerce. Smart-collar IoT telemetry, automated rotary milking, and transparent livestock co-ownership.
             </p>
+
+            {/* Direct Portal Switcher Banner */}
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Quick Portals
+                </span>
+                <span className="text-xs text-slate-500">
+                  (password: <code className="px-1 py-0.5 bg-slate-100 rounded text-slate-800 font-mono font-bold">123</code>)
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Link href="/admin" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
+                  Admin
+                </Link>
+                <Link href="/staff" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
+                  Staff
+                </Link>
+                <Link href="/investor" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
+                  Investor
+                </Link>
+                <Link href="/consumer" className="px-2.5 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-800 hover:bg-emerald-600 hover:text-white transition-colors">
+                  Consumer
+                </Link>
+              </div>
+            </div>
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -270,24 +313,21 @@ export default function HomePage() {
 
             {/* Metrics strip */}
             <div
-              className="grid grid-cols-3 gap-4 pt-5 border-t"
-              style={{ borderColor: 'var(--color-border)' }}
+              className="grid grid-cols-3 gap-3 sm:gap-6 pt-5 border-t border-slate-200"
             >
               {[
-                { value: '1,900+', label: 'Indigenous Cattle', color: 'var(--color-text-primary)' },
-                { value: '1.5%',   label: 'Base Monthly Yield (Sim.)', color: 'var(--color-brand)' },
-                { value: '145%',   label: 'Yield Reserve Buffer', color: 'var(--color-accent)' },
+                { value: '1,900+', label: 'Indigenous Cattle', color: 'text-slate-900' },
+                { value: '1.5%',   label: 'Monthly Base Yield', color: 'text-emerald-600' },
+                { value: '145%',   label: 'Yield Reserve Buffer', color: 'text-amber-600' },
               ].map(({ value, label, color }) => (
-                <div key={label}>
+                <div key={label} className="flex flex-col">
                   <span
-                    className="block font-bold leading-none"
-                    style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-3xl)', color }}
+                    className={cn('text-2xl sm:text-3xl font-extrabold tracking-tight', color)}
                   >
                     {value}
                   </span>
                   <span
-                    className="block text-xs mt-1"
-                    style={{ color: 'var(--color-text-muted)' }}
+                    className="text-xs text-slate-500 mt-1 font-medium"
                   >
                     {label}
                   </span>
@@ -382,20 +422,19 @@ export default function HomePage() {
               return (
                 <RevealSection key={portal.title} delay={i * 60}>
                   <div
-                    className="dl-card dl-card-hover flex flex-col h-full"
+                    className="dl-card dl-card-hover flex flex-col h-full bg-white border border-slate-200 rounded-2xl shadow-xs"
                     style={{ padding: 'var(--sp-5)' }}
                   >
                     {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-3">
                       <div
-                        className="w-11 h-11 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                         style={{ background: portal.accentBg, border: `1px solid ${portal.accentColor}25` }}
                       >
                         <Icon className="w-5 h-5" style={{ color: portal.accentColor }} />
                       </div>
                       <span
-                        className="text-3xl font-bold"
-                        style={{ fontFamily: 'var(--font-display)', color: 'var(--color-border)', lineHeight: 1 }}
+                        className="text-2xl font-bold font-mono text-slate-300"
                       >
                         {portal.number}
                       </span>
@@ -406,27 +445,31 @@ export default function HomePage() {
                     </Badge>
 
                     <h3
-                      className="font-bold mb-2"
-                      style={{ fontSize: 'var(--text-lg)', color: 'var(--color-text-primary)' }}
+                      className="text-base font-bold text-slate-900 mb-1.5"
                     >
                       {portal.title}
                     </h3>
 
                     <p
-                      className="text-xs leading-relaxed mb-4 flex-1"
-                      style={{ color: 'var(--color-text-secondary)' }}
+                      className="text-xs leading-relaxed mb-3 text-slate-600 flex-1"
                     >
                       {portal.description}
                     </p>
 
-                    <ul className="space-y-1.5 mb-5">
+                    {/* Demo credential chip */}
+                    <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+                      <span className="text-slate-500 font-medium">Demo:</span>
+                      <span className="font-mono font-bold text-slate-800">{portal.demoEmail}</span>
+                    </div>
+
+                    <ul className="space-y-1.5 mb-4">
                       {portal.bullets.map((b) => (
                         <li key={b} className="flex items-start gap-2">
                           <CheckCircle2
                             className="w-3.5 h-3.5 shrink-0 mt-0.5"
                             style={{ color: portal.accentColor }}
                           />
-                          <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{b}</span>
+                          <span className="text-xs text-slate-600">{b}</span>
                         </li>
                       ))}
                     </ul>
@@ -689,31 +732,32 @@ export default function HomePage() {
               {PRODUCTS_PREVIEW.map((p) => (
                 <div
                   key={p.name}
-                  className="dl-card flex-1"
-                  style={{ padding: 'var(--sp-4)' }}
+                  className="dl-card flex-1 flex gap-3.5 items-center bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h4 className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{p.name}</h4>
-                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{p.note}</p>
-                    </div>
-                    <span
-                      className="text-sm font-bold shrink-0"
-                      style={{ color: 'var(--color-brand)', fontVariantNumeric: 'tabular-nums' }}
-                    >
-                      {p.price}
-                    </span>
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-slate-100 bg-slate-50">
+                    <Image
+                      src={p.image}
+                      alt={p.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                  <div
-                    className="flex items-center justify-between mt-3 pt-3"
-                    style={{ borderTop: '1px solid var(--color-border)' }}
-                  >
-                    <span className="text-xs font-semibold" style={{ color: p.statusColor }}>{p.status}</span>
-                    <Link href="/consumer">
-                      <Button variant="ghost" size="xs" className="h-6 font-bold" style={{ color: 'var(--color-brand)' }}>
-                        Add →
-                      </Button>
-                    </Link>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="text-sm font-bold text-slate-900 truncate">{p.name}</h4>
+                      <span className="text-sm font-bold text-emerald-600 shrink-0 tabular-nums">
+                        {p.price}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 truncate mt-0.5">{p.note}</p>
+                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-100">
+                      <span className="text-[11px] font-semibold" style={{ color: p.statusColor }}>{p.status}</span>
+                      <Link href="/consumer">
+                        <Button variant="ghost" size="xs" className="h-6 text-xs font-bold text-emerald-600 hover:text-emerald-700">
+                          Order →
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
